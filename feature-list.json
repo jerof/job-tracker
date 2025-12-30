@@ -1,0 +1,96 @@
+{
+  "project": "job-tracker",
+  "created": "2025-12-28",
+  "features": [
+    {
+      "id": "setup",
+      "name": "Project Setup",
+      "status": "passing",
+      "tasks": [
+        "Initialize Next.js with TypeScript + Tailwind",
+        "Set up Supabase project",
+        "Create database schema",
+        "Configure environment variables"
+      ]
+    },
+    {
+      "id": "auth",
+      "name": "Google OAuth",
+      "status": "pending",
+      "tasks": [
+        "Set up Google Cloud Console project",
+        "Configure Supabase Google auth provider",
+        "Create login/logout UI",
+        "Store Gmail OAuth tokens"
+      ]
+    },
+    {
+      "id": "kanban-ui",
+      "name": "Kanban Board UI",
+      "status": "in-progress",
+      "tasks": [
+        "Create KanbanBoard component",
+        "Create KanbanColumn component",
+        "Create ApplicationCard component",
+        "Add drag-and-drop functionality",
+        "Create CardDetailModal for editing",
+        "Add responsive mobile layout"
+      ]
+    },
+    {
+      "id": "gmail-sync",
+      "name": "Gmail Integration",
+      "status": "pending",
+      "tasks": [
+        "Implement Gmail API client",
+        "Build email query filters",
+        "Fetch and process emails",
+        "Handle token refresh"
+      ]
+    },
+    {
+      "id": "ai-parsing",
+      "name": "AI Email Parsing",
+      "status": "pending",
+      "tasks": [
+        "Create Claude parsing prompt",
+        "Implement parsing function",
+        "Handle confidence thresholds",
+        "Map parsed data to application records"
+      ]
+    },
+    {
+      "id": "api",
+      "name": "API Routes",
+      "status": "pending",
+      "tasks": [
+        "GET /api/applications",
+        "PATCH /api/applications/[id]",
+        "POST /api/sync",
+        "Add error handling"
+      ]
+    },
+    {
+      "id": "stats",
+      "name": "Stats & Metrics",
+      "status": "pending",
+      "tasks": [
+        "Calculate total applications",
+        "Calculate response rate",
+        "Display in header bar"
+      ]
+    },
+    {
+      "id": "polish",
+      "name": "Polish & Deploy",
+      "status": "pending",
+      "tasks": [
+        "Add loading states",
+        "Add error states",
+        "Add empty states",
+        "Deploy to Vercel",
+        "Test full flow"
+      ]
+    }
+  ]
+}
