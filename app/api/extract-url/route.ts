@@ -29,14 +29,14 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       return NextResponse.json({
         error: 'Failed to fetch URL',
-        company: extractCompanyFromDomain(parsedUrl.hostname),
+        company: extractCompanyFromUrl(parsedUrl.hostname, parsedUrl.pathname),
       }, { status: 200 }); // Still return partial data
     }
 
     const html = await response.text();
 
     // Extract metadata from HTML
-    const metadata = extractMetadata(html, parsedUrl.hostname);
+    const metadata = extractMetadata(html, parsedUrl.hostname, parsedUrl.pathname);
 
     return NextResponse.json(metadata);
   } catch (error) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function extractMetadata(html: string, hostname: string) {
+function extractMetadata(html: string, hostname: string, pathname: string) {
   const result: {
     company: string | null;
     role: string | null;
@@ -67,8 +67,12 @@ function extractMetadata(html: string, hostname: string) {
   const title = extractTitle(html);
   const description = extractMeta(html, 'description');
 
-  // Try to extract company name
-  result.company = ogSiteName || extractCompanyFromDomain(hostname) || extractCompanyFromTitle(title);
+  // Try to extract company name - prioritize URL-based extraction for job boards
+  const urlCompany = extractCompanyFromUrl(hostname, pathname);
+  // Don't use ogSiteName if it's a job board name
+  const jobBoards = ['lever', 'greenhouse', 'ashby', 'workable', 'smartrecruiters', 'hibob', 'workday'];
+  const isJobBoardSiteName = ogSiteName && jobBoards.some(jb => ogSiteName.toLowerCase().includes(jb));
+  result.company = urlCompany || (!isJobBoardSiteName ? ogSiteName : null) || extractCompanyFromTitle(title);
 
   // Try to extract role from title
   result.role = extractRoleFromTitle(ogTitle || title);
@@ -105,13 +109,50 @@ function extractTitle(html: string): string | null {
   return match ? decodeHtmlEntities(match[1].trim()) : null;
 }
 
+// Job board domains where company name is in the URL path
+const JOB_BOARD_DOMAINS: Record<string, RegExp> = {
+  'jobs.lever.co': /^\/([^/]+)/,
+  'jobs.ashbyhq.com': /^\/([^/]+)/,
+  'boards.greenhouse.io': /^\/([^/]+)/,
+  'apply.workable.com': /^\/([^/]+)/,
+  'jobs.smartrecruiters.com': /^\/([^/]+)/,
+  'careers.hibob.com': /^\/([^/]+)/,  // e.g., leboncoin.careers.hibob.com
+};
+
+function extractCompanyFromUrl(hostname: string, pathname: string): string | null {
+  // Check if this is a known job board
+  for (const [domain, pattern] of Object.entries(JOB_BOARD_DOMAINS)) {
+    if (hostname.includes(domain) || hostname.endsWith(domain.replace('jobs.', '').replace('boards.', '').replace('apply.', '').replace('careers.', ''))) {
+      const match = pathname.match(pattern);
+      if (match) {
+        // Capitalize and clean up company name from path
+        const company = match[1].replace(/-/g, ' ');
+        return company.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      }
+    }
+  }
+
+  // Check for subdomain pattern like "leboncoin.careers.hibob.com"
+  const subdomainMatch = hostname.match(/^([^.]+)\.(careers|jobs|apply)\./);
+  if (subdomainMatch) {
+    const company = subdomainMatch[1].replace(/-/g, ' ');
+    return company.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  // Fall back to domain extraction
+  return extractCompanyFromDomain(hostname);
+}
+
 function extractCompanyFromDomain(hostname: string): string | null {
+  // Skip known job board domains
+  const jobBoards = ['lever', 'greenhouse', 'ashbyhq', 'workable', 'smartrecruiters', 'bamboohr', 'workday', 'icims', 'taleo', 'successfactors', 'myworkdayjobs', 'hibob', 'breezy', 'recruitee', 'jazz'];
+
   // Remove common prefixes/suffixes
   let domain = hostname
-    .replace(/^(www\.|careers\.|jobs\.|apply\.|hire\.|recruiting\.)/, '')
-    .replace(/\.(com|org|net|io|co|careers|jobs|workable|lever|greenhouse|ashbyhq|smartrecruiters|bamboohr|workday|icims|taleo|successfactors|myworkdayjobs|hibob).*$/, '');
+    .replace(/^(www\.|careers\.|jobs\.|apply\.|hire\.|recruiting\.|boards\.)/, '')
+    .replace(/\.(com|org|net|io|co|hr).*$/, '');
 
-  if (!domain) return null;
+  if (!domain || jobBoards.includes(domain.toLowerCase())) return null;
 
   // Capitalize first letter
   return domain.charAt(0).toUpperCase() + domain.slice(1);
