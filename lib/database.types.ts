@@ -6,10 +6,11 @@ export interface DbApplication {
   company: string;
   role: string | null;
   location: string | null;
-  status: 'applied' | 'interviewing' | 'offer' | 'closed';
+  status: 'saved' | 'applied' | 'interviewing' | 'offer' | 'closed';
   close_reason: 'rejected' | 'withdrawn' | 'ghosted' | 'accepted' | null;
-  applied_date: string;
+  applied_date: string | null;
   source_email_id: string | null;
+  job_url: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -44,6 +45,7 @@ export function dbToApplication(row: DbApplication) {
     closeReason: row.close_reason,
     appliedDate: row.applied_date,
     sourceEmailId: row.source_email_id,
+    jobUrl: row.job_url,
     notes: row.notes,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -56,7 +58,8 @@ export function applicationToDb(app: {
   role?: string | null;
   status?: string;
   closeReason?: string | null;
-  appliedDate?: string;
+  appliedDate?: string | null;
+  jobUrl?: string | null;
   notes?: string | null;
 }) {
   return {
@@ -64,7 +67,8 @@ export function applicationToDb(app: {
     role: app.role || null,
     status: app.status || 'applied',
     close_reason: app.closeReason || null,
-    applied_date: app.appliedDate || new Date().toISOString(),
+    applied_date: app.appliedDate || null,
+    job_url: app.jobUrl || null,
     notes: app.notes || null,
   };
 }

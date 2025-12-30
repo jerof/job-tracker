@@ -21,6 +21,16 @@ const COLUMN_CONFIG: Record<ApplicationStatus, {
   countBg: string;
   countText: string;
 }> = {
+  saved: {
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+      </svg>
+    ),
+    dotColor: 'bg-purple-500',
+    countBg: 'bg-purple-100 dark:bg-purple-900/30',
+    countText: 'text-purple-600 dark:text-purple-400',
+  },
   applied: {
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

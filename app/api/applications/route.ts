@@ -15,10 +15,11 @@ export async function GET() {
     }
 
     // For now, get all applications (auth will be added later)
+    // Order by created_at since saved jobs may not have applied_date
     const { data, error } = await supabase
       .from('applications')
       .select('*')
-      .order('applied_date', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Database error:', error);
@@ -27,9 +28,10 @@ export async function GET() {
 
     const applications = (data || []).map(dbToApplication);
 
-    // Calculate stats
-    const total = applications.length;
-    const responded = applications.filter(a => a.status !== 'applied').length;
+    // Calculate stats (exclude saved jobs - they're not applications yet)
+    const applied = applications.filter(a => a.status !== 'saved');
+    const total = applied.length;
+    const responded = applied.filter(a => a.status !== 'applied').length;
     const responseRate = total > 0 ? Math.round((responded / total) * 100) : 0;
 
     return NextResponse.json({

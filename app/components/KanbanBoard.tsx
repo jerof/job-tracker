@@ -12,6 +12,7 @@ import { LoadingSkeleton } from './LoadingSkeleton';
 import { EmailSidePanel } from './EmailSidePanel';
 
 const COLUMNS: { id: ApplicationStatus; title: string }[] = [
+  { id: 'saved', title: 'Saved' },
   { id: 'applied', title: 'Applied' },
   { id: 'interviewing', title: 'Interviewing' },
   { id: 'offer', title: 'Offer' },
@@ -220,7 +221,12 @@ export function KanbanBoard() {
   const getApplicationsByStatus = (status: ApplicationStatus) => {
     return filteredApplications
       .filter((app) => app.status === status)
-      .sort((a, b) => new Date(b.appliedDate).getTime() - new Date(a.appliedDate).getTime());
+      .sort((a, b) => {
+        // For saved jobs, sort by createdAt since appliedDate is null
+        const dateA = a.appliedDate || a.createdAt;
+        const dateB = b.appliedDate || b.createdAt;
+        return new Date(dateB).getTime() - new Date(dateA).getTime();
+      });
   };
 
   const getColumnCount = (status: ApplicationStatus) => {
@@ -388,15 +394,19 @@ export function KanbanBoard() {
   };
 
   const stats = useMemo(() => {
-    const total = applications.length;
-    const responded = applications.filter((a) => a.status !== 'applied').length;
+    // Exclude saved jobs from total (they haven't been applied yet)
+    const applied = applications.filter((a) => a.status !== 'saved');
+    const total = applied.length;
+    const responded = applied.filter((a) => a.status !== 'applied').length;
     const interviewing = applications.filter((a) => a.status === 'interviewing').length;
     const offers = applications.filter((a) => a.status === 'offer').length;
+    const saved = applications.filter((a) => a.status === 'saved').length;
     return {
       total,
       responseRate: total > 0 ? Math.round((responded / total) * 100) : 0,
       interviewing,
       offers,
+      saved,
     };
   }, [applications]);
 

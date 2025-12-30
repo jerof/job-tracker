@@ -16,6 +16,7 @@ interface ValidationErrors {
 }
 
 const STATUS_OPTIONS: { value: ApplicationStatus; label: string; description: string; color: string }[] = [
+  { value: 'saved', label: 'Saved', description: 'To apply later', color: 'bg-purple-500' },
   { value: 'applied', label: 'Applied', description: 'Just submitted', color: 'bg-blue-500' },
   { value: 'interviewing', label: 'Interviewing', description: 'In process', color: 'bg-amber-500' },
   { value: 'offer', label: 'Offer', description: 'Received offer', color: 'bg-green-500' },
@@ -26,6 +27,7 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
   const [company, setCompany] = useState('');
   const [role, setRole] = useState('');
   const [location, setLocation] = useState('');
+  const [jobUrl, setJobUrl] = useState('');
   const [appliedDate, setAppliedDate] = useState(new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState<ApplicationStatus>(defaultStatus);
   const [notes, setNotes] = useState('');
@@ -33,9 +35,47 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
   const [isVisible, setIsVisible] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const companyInputRef = useRef<HTMLInputElement>(null);
+
+  // Extract metadata from URL
+  const extractFromUrl = useCallback(async (url: string) => {
+    if (!url || !url.startsWith('http')) return;
+
+    setIsExtracting(true);
+    try {
+      const response = await fetch('/api/extract-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Only fill empty fields
+        if (data.company && !company) setCompany(data.company);
+        if (data.role && !role) setRole(data.role);
+        if (data.location && !location) setLocation(data.location);
+        // Auto-switch to "saved" status if adding via URL
+        if (status === 'applied') setStatus('saved');
+      }
+    } catch (error) {
+      console.error('Failed to extract URL:', error);
+    } finally {
+      setIsExtracting(false);
+    }
+  }, [company, role, location, status]);
+
+  // Handle URL paste
+  const handleUrlChange = (newUrl: string) => {
+    setJobUrl(newUrl);
+    // Auto-extract if it looks like a full URL was pasted
+    if (newUrl.startsWith('http') && newUrl.length > 20) {
+      extractFromUrl(newUrl);
+    }
+  };
 
   // Animate in
   useEffect(() => {
@@ -58,7 +98,7 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [company, role, location, appliedDate, status, notes]);
+  }, [company, role, location, jobUrl, appliedDate, status, notes]);
 
   // Focus trap
   useEffect(() => {
@@ -91,13 +131,16 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
     return () => modal.removeEventListener('keydown', handleTab);
   }, []);
 
-  const validateField = useCallback((field: string, value: string): string | undefined => {
+  const validateField = useCallback((field: string, value: string, currentStatus?: ApplicationStatus): string | undefined => {
     switch (field) {
       case 'company':
         if (!value.trim()) return 'Company name is required';
         if (value.trim().length < 2) return 'Company name is too short';
         return undefined;
       case 'appliedDate':
+        // Applied date is optional for saved jobs
+        if ((currentStatus || status) === 'saved') return undefined;
+        if (!value) return 'Applied date is required';
         const date = new Date(value);
         const today = new Date();
         today.setHours(23, 59, 59, 999);
@@ -106,7 +149,7 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
       default:
         return undefined;
     }
-  }, []);
+  }, [status]);
 
   const handleBlur = (field: string, value: string) => {
     setTouched(prev => ({ ...prev, [field]: true }));
@@ -123,7 +166,7 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
     // Validate all fields
     const newErrors: ValidationErrors = {
       company: validateField('company', company),
-      appliedDate: validateField('appliedDate', appliedDate),
+      appliedDate: validateField('appliedDate', appliedDate, status),
     };
 
     setErrors(newErrors);
@@ -149,13 +192,14 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
       location: location.trim() || null,
       status,
       closeReason: null,
-      appliedDate,
+      appliedDate: status === 'saved' ? null : appliedDate,
       sourceEmailId: null,
+      jobUrl: jobUrl.trim() || null,
       notes: notes.trim() || null,
     });
   };
 
-  const isFormValid = company.trim().length >= 2 && !errors.company && !errors.appliedDate;
+  const isFormValid = company.trim().length >= 2 && !errors.company && (status === 'saved' || !errors.appliedDate);
 
   return (
     <>
@@ -184,16 +228,26 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg ${
+                status === 'saved'
+                  ? 'bg-gradient-to-br from-purple-500 to-purple-600 shadow-purple-500/25'
+                  : 'bg-gradient-to-br from-blue-500 to-indigo-600 shadow-blue-500/25'
+              }`}>
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  {status === 'saved' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  )}
                 </svg>
               </div>
               <div>
                 <h2 id="modal-title" className="text-lg font-semibold text-gray-900 dark:text-white">
-                  New Application
+                  {status === 'saved' ? 'Save Job' : 'New Application'}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Track a job you applied to</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {status === 'saved' ? 'Save a job to apply later' : 'Track a job you applied to'}
+                </p>
               </div>
             </div>
             <button
@@ -285,8 +339,52 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
                 />
               </div>
 
+              {/* Job URL Field */}
+              <div>
+                <label htmlFor="jobUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  Job URL {isExtracting && <span className="text-purple-500 font-normal animate-pulse">extracting...</span>}
+                </label>
+                <div className="relative">
+                  <input
+                    id="jobUrl"
+                    type="url"
+                    value={jobUrl}
+                    onChange={(e) => handleUrlChange(e.target.value)}
+                    placeholder="Paste job URL to auto-fill details..."
+                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-shadow ${
+                      isExtracting ? 'border-purple-300 dark:border-purple-700' : 'border-gray-200 dark:border-gray-700'
+                    }`}
+                  />
+                  {isExtracting && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <svg className="w-5 h-5 text-purple-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    </div>
+                  )}
+                  {jobUrl && !isExtracting && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <a
+                        href={jobUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300"
+                        title="Open link"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    </div>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-gray-400">Paste a job posting URL to auto-fill company and role</p>
+              </div>
+
               {/* Date and Status Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {status !== 'saved' && (
                 <div>
                   <label htmlFor="appliedDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                     Applied Date
@@ -312,8 +410,9 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
                     <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.appliedDate}</p>
                   )}
                 </div>
+                )}
 
-                <div>
+                <div className={status === 'saved' ? 'col-span-full sm:col-span-1' : ''}>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                     Status
                   </label>
@@ -377,7 +476,9 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
                   disabled={!isFormValid || isSaving}
                   className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${
                     isFormValid && !isSaving
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl'
+                      ? status === 'saved'
+                        ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -392,9 +493,13 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
                   ) : (
                     <>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        {status === 'saved' ? (
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        ) : (
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        )}
                       </svg>
-                      Save Application
+                      {status === 'saved' ? 'Save Job' : 'Save Application'}
                     </>
                   )}
                 </button>

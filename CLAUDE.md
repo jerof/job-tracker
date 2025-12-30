@@ -1,5 +1,16 @@
 # Job Tracker - Project Instructions
 
+## Philosophy: Simple Scales, Fancy Fails
+
+**Every feature should be the simplest thing that could work.**
+
+- No premature abstraction
+- No config options until users demand them
+- No "nice to have" fields - only what's essential
+- Ship fast, iterate based on real usage
+- If it takes more than 1 session to build, it's too complex
+- When in doubt, cut scope
+
 ## Project Overview
 A job application tracker that auto-syncs with Gmail to track applications, interviews, and outcomes.
 

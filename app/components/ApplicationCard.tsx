@@ -13,6 +13,7 @@ interface ApplicationCardProps {
 }
 
 const STATUS_COLORS: Record<ApplicationStatus, string> = {
+  saved: 'bg-purple-500',
   applied: 'bg-blue-500',
   interviewing: 'bg-violet-500',
   offer: 'bg-emerald-500',
@@ -96,10 +97,31 @@ export function ApplicationCard({ application, index, onClick, emailCount = 0, o
             {/* Bottom row: date + indicators */}
             <div className="flex items-center justify-between mt-2.5 gap-2">
               <span className="text-xs text-slate-400 dark:text-slate-500 tabular-nums">
-                {formatDate(application.appliedDate)}
+                {application.status === 'saved' && !application.appliedDate
+                  ? `Saved ${formatDate(application.createdAt)}`
+                  : application.appliedDate
+                    ? formatDate(application.appliedDate)
+                    : formatDate(application.createdAt)}
               </span>
 
               <div className="flex items-center gap-1.5">
+                {/* Job URL link for saved jobs */}
+                {application.jobUrl && (
+                  <a
+                    href={application.jobUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors text-[11px] font-medium"
+                    title="Open job posting"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    View
+                  </a>
+                )}
+
                 {/* Email icon with count */}
                 {emailCount > 0 && onEmailClick && (
                   <EmailIcon count={emailCount} onClick={handleEmailClick} />
