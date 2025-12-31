@@ -122,6 +122,11 @@
 ## Ideas Parking Lot
 *Capture ideas, build later if users ask*
 
+### UI/UX Enhancements
+- **Left side vertical nav**: Navigation to access different modules of the app (Dashboard, Applications, CV, Research, Settings)
+- **CV Module**: Add master CV section where user can store/edit their primary CV
+- **Tailor CV feature**: Integrate /tailor-cv skill into the app UI to customize CV for specific job applications
+
 ### From Research
 - **Auto-apply features**: Tools like Simplify autofill applications. Complex, potential ToS issues.
 - **Calendar sync**: Interview scheduling. Users already have calendars.
