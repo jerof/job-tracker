@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Tracker - Save Job</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Save Job</h1>
+    </header>
+
+    <form id="job-form" class="form">
+      <div class="form-group">
+        <label for="company">Company *</label>
+        <input
+          type="text"
+          id="company"
+          name="company"
+          placeholder="e.g., Acme Corp"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role / Title *</label>
+        <input
+          type="text"
+          id="role"
+          name="role"
+          placeholder="e.g., Software Engineer"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          placeholder="e.g., San Francisco, CA (optional)"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="url">Job URL</label>
+        <input
+          type="url"
+          id="url"
+          name="url"
+          placeholder="Auto-filled from current page"
+          readonly
+        >
+      </div>
+
+      <div id="status" class="status hidden"></div>
+
+      <div class="form-actions">
+        <button type="submit" id="save-btn" class="btn btn-primary">
+          <span class="btn-text">Save Job</span>
+          <span class="btn-loading hidden">Saving...</span>
+        </button>
+      </div>
+    </form>
+
+    <footer class="footer">
+      <a href="http://localhost:3000" target="_blank" class="link">
+        Open Full Tracker
+      </a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -423,7 +423,7 @@ export function KanbanBoard() {
   const isEmpty = applications.length === 0;
 
   return (
-    <div className="h-screen flex flex-col bg-slate-100 dark:bg-slate-950">
+    <div data-testid="kanban-board" className="h-screen flex flex-col bg-slate-100 dark:bg-slate-950">
       {/* Floating Toast Notification */}
       {syncResult && (
         <div

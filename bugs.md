@@ -2,7 +2,28 @@
 
 ## Open Bugs
 
-_No bugs yet_
+### [BUG-006] Drag and drop cards not working
+- **Status:** Open
+- **Severity:** High
+- **Found:** 2025-12-31
+
+**Description:**
+When dragging a card to move it between columns, the card disappears and cannot be dropped. User is unable to change application status via drag and drop.
+
+**Steps to Reproduce:**
+1. View the Kanban board with applications
+2. Click and hold on a card to drag it
+3. Card disappears when dragging starts
+4. Cannot drop the card in another column
+
+**Attempted Fixes:**
+- Added portal-based rendering to escape overflow containers - did not resolve
+- Adjusted overflow CSS on board container - did not resolve
+
+**Notes:**
+- Uses `@hello-pangea/dnd` library (fork of react-beautiful-dnd)
+- May be related to overflow:auto on parent containers clipping the dragged element
+- Portal approach was implemented but still not working
 
 ---
 

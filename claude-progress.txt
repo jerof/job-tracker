@@ -1,0 +1,53 @@
+# Claude Progress - Job Tracker
+
+## Session: 2025-12-31 (Chrome Extension)
+
+### Completed: Chrome Extension (Phase 3)
+
+Built complete Chrome Extension with expert team:
+
+**Files Created:**
+- `extension/manifest.json` - Manifest V3 config
+- `extension/popup.html` - Save job form UI
+- `extension/popup.css` - Modern styling with warning states
+- `extension/popup.js` - Form logic + duplicate checking
+- `extension/content.js` - Job data extraction for LinkedIn, Indeed, Glassdoor, Ashby
+- `extension/background.js` - Service worker for badge updates
+- `app/api/extension/save/route.ts` - POST endpoint to save jobs
+- `app/api/extension/check-duplicate/route.ts` - GET endpoint to check duplicates
+
+**Features:**
+1. Auto-extracts company, role, location from job posting pages
+2. Duplicate detection before saving (warns if already exists)
+3. Saves to "Saved" column in tracker
+4. Works on LinkedIn, Indeed, Glassdoor, Ashby job pages
+5. Clean popup UI matching main app styling
+
+**To Install Extension:**
+1. Open Chrome → `chrome://extensions/`
+2. Enable "Developer mode" (top right)
+3. Click "Load unpacked"
+4. Select the `extension/` folder
+
+**Icons Needed:**
+Create PNG icons (16x16, 48x48, 128x128) or Chrome will use placeholders.
+
+---
+
+## Previous Session: Research Feature Fix
+
+Fixed research API to use REAL data from job postings:
+- Changed from GET to POST method
+- Added job URL fetching + content extraction
+- Added email context fetching
+- Handles JavaScript-rendered pages (meta tags, JSON-LD)
+- Correctly extracts voize.de domain, Berlin HQ, Series A funding
+
+---
+
+## Next Steps
+
+1. Add icons to extension (optional - works without)
+2. Deploy to production and update extension's API_BASE_URL
+3. Consider publishing to Chrome Web Store
+4. Phase 4: Resume Management (file upload, version tracking)

@@ -57,6 +57,7 @@ export function ApplicationCard({ application, index, onClick, emailCount = 0, o
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onClick(application)}
+          data-testid="application-card"
           className={`
             group relative
             bg-white dark:bg-slate-800

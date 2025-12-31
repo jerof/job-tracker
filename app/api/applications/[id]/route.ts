@@ -59,6 +59,8 @@ export async function PATCH(
     if (body.closeReason !== undefined) updateData.close_reason = body.closeReason;
     if (body.notes !== undefined) updateData.notes = body.notes;
     if (body.appliedDate !== undefined) updateData.applied_date = body.appliedDate;
+    if (body.jobUrl !== undefined) updateData.job_url = body.jobUrl;
+    if (body.location !== undefined) updateData.location = body.location;
 
     const { data, error } = await supabase
       .from('applications')
