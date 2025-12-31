@@ -116,27 +116,30 @@ const JOB_BOARD_DOMAINS: Record<string, RegExp> = {
   'boards.greenhouse.io': /^\/([^/]+)/,
   'apply.workable.com': /^\/([^/]+)/,
   'jobs.smartrecruiters.com': /^\/([^/]+)/,
-  'careers.hibob.com': /^\/([^/]+)/,  // e.g., leboncoin.careers.hibob.com
 };
 
 function extractCompanyFromUrl(hostname: string, pathname: string): string | null {
-  // Check if this is a known job board
+  // FIRST: Check for subdomain pattern like "leboncoin.careers.hibob.com" or "company.jobs.lever.co"
+  // This must come first because hibob/etc use subdomain for company name
+  const subdomainMatch = hostname.match(/^([^.]+)\.(careers|jobs|apply|hire)\./);
+  if (subdomainMatch) {
+    const subdomain = subdomainMatch[1].toLowerCase();
+    // Make sure it's not a generic subdomain
+    if (!['www', 'app', 'api', 'jobs', 'careers', 'apply'].includes(subdomain)) {
+      const company = subdomain.replace(/-/g, ' ');
+      return company.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+  }
+
+  // SECOND: Check job boards where company is in the PATH (lever, greenhouse, etc)
   for (const [domain, pattern] of Object.entries(JOB_BOARD_DOMAINS)) {
-    if (hostname.includes(domain) || hostname.endsWith(domain.replace('jobs.', '').replace('boards.', '').replace('apply.', '').replace('careers.', ''))) {
+    if (hostname.includes(domain)) {
       const match = pathname.match(pattern);
       if (match) {
-        // Capitalize and clean up company name from path
         const company = match[1].replace(/-/g, ' ');
         return company.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       }
     }
-  }
-
-  // Check for subdomain pattern like "leboncoin.careers.hibob.com"
-  const subdomainMatch = hostname.match(/^([^.]+)\.(careers|jobs|apply)\./);
-  if (subdomainMatch) {
-    const company = subdomainMatch[1].replace(/-/g, ' ');
-    return company.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }
 
   // Fall back to domain extraction
