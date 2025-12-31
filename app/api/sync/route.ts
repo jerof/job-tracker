@@ -150,6 +150,23 @@ export async function POST() {
         existing = nullRoleMatch;
       }
 
+      // FINAL FALLBACK: If still no match, check for ANY application with same company
+      // This prevents duplicates when role changes between emails (e.g., rejection with no role)
+      if (!existing) {
+        const { data: companyMatch } = await supabase
+          .from('applications')
+          .select('id, status, role')
+          .ilike('company', parsed.company)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (companyMatch) {
+          console.log(`Found company fallback match for ${parsed.company} (existing role: ${companyMatch.role})`);
+          existing = companyMatch;
+        }
+      }
+
       const newStatus = emailTypeToStatus(parsed.type);
       const emailDate = new Date(email.date).toISOString();
 
