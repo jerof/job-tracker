@@ -1,5 +1,7 @@
 # PRD-002: CV/Resume Module
 
+**Status: Shipped** ✓
+
 ## Overview
 
 Users can upload or paste their master CV/resume so the app stores their skills, experience, and qualifications. This data enables future job-matching features by providing a single source of truth for the user's professional profile.

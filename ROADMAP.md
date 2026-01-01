@@ -63,20 +63,20 @@
 *Capture jobs before applying*
 
 ### 3.1 MVP Extension
-- [ ] Manifest V3 (minimal permissions: `activeTab`, `storage`)
-- [ ] "Save to Tracker" popup
-- [ ] Pre-fills URL + page title
-- [ ] User adds company/role, clicks save
-- [ ] Syncs via API to main app
+- [x] Manifest V3 (minimal permissions: `activeTab`, `storage`)
+- [x] "Save to Tracker" popup
+- [x] Pre-fills URL + page title
+- [x] User adds company/role, clicks save
+- [x] Syncs via API to main app
 
 ### 3.2 Duplicate Detection
-- [ ] Badge shows if already applied to company
-- [ ] Warning before saving duplicate
+- [x] Badge shows if already applied to company
+- [x] Warning before saving duplicate
 
 ### 3.3 Job Board Integration
-- [ ] Works on LinkedIn, Indeed, Glassdoor
-- [ ] Auto-detect job posting pages
-- [ ] Extract structured data where possible
+- [x] Works on LinkedIn, Indeed, Glassdoor
+- [x] Auto-detect job posting pages
+- [x] Extract structured data where possible
 
 ---
 
@@ -123,12 +123,12 @@
 *Capture ideas, build later if users ask*
 
 ### Interview Prep Enhancement
-- **Skills Matcher**: Based on job description, identify which skills from user's CV to highlight in interview. AI analyzes JD requirements vs CV experience and suggests talking points.
+- [x] **Skills Matcher**: Based on job description, identify which skills from user's CV to highlight in interview. AI analyzes JD requirements vs CV experience and suggests talking points.
 
 ### UI/UX Enhancements
-- **Left side vertical nav**: Navigation to access different modules of the app (Dashboard, Applications, CV, Research, Settings)
-- **CV Module**: Add master CV section where user can store/edit their primary CV
-- **Tailor CV feature**: Integrate /tailor-cv skill into the app UI to customize CV for specific job applications
+- [x] **Left side vertical nav**: Navigation to access different modules of the app (Dashboard, Applications, CV, Research, Settings)
+- [x] **CV Module**: Add master CV section where user can store/edit their primary CV
+- [x] **Tailor CV feature**: Integrate /tailor-cv skill into the app UI to customize CV for specific job applications
 
 ### From Research
 - **Auto-apply features**: Tools like Simplify autofill applications. Complex, potential ToS issues.
@@ -210,10 +210,14 @@ ALTER TABLE applications ADD COLUMN resume_path TEXT;
 
 | Date | Change |
 |------|--------|
+| 2026-01-01 | Shipped Phase 3 Chrome Extension |
+| | Shipped Left Side Navigation (PRD-001) |
+| | Shipped CV Module (PRD-002) |
+| | Shipped Skills Matcher (PRD-003) |
 | 2024-12-31 | Initial roadmap created |
 | | Added Phase 1-4 features |
 | | Researched competitive landscape |
 
 ---
 
-*Last updated: December 31, 2024*
+*Last updated: January 1, 2026*

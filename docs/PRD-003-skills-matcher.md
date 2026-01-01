@@ -1,5 +1,7 @@
 # PRD-003: Skills Matcher
 
+**Status: Shipped** ✓
+
 ## Overview
 
 AI-powered feature that analyzes a job description against the user's CV to identify relevant skills, experiences, and talking points for interview preparation. Helps users quickly understand which parts of their background to emphasize for each specific opportunity.

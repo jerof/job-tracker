@@ -1,5 +1,7 @@
 # PRD-001: Left Side Vertical Navigation
 
+**Status: Shipped** ✓
+
 ## Overview
 
 Add a collapsible vertical navigation sidebar to enable users to switch between app modules (Jobs, CV, Research, Settings). This establishes the navigation pattern for the app as it grows beyond the single Kanban board.
