@@ -122,6 +122,9 @@
 ## Ideas Parking Lot
 *Capture ideas, build later if users ask*
 
+### Interview Prep Enhancement
+- **Skills Matcher**: Based on job description, identify which skills from user's CV to highlight in interview. AI analyzes JD requirements vs CV experience and suggests talking points.
+
 ### UI/UX Enhancements
 - **Left side vertical nav**: Navigation to access different modules of the app (Dashboard, Applications, CV, Research, Settings)
 - **CV Module**: Add master CV section where user can store/edit their primary CV
