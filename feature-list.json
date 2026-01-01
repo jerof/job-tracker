@@ -1,7 +1,44 @@
 {
   "project": "job-tracker",
   "created": "2025-12-28",
+  "updated": "2026-01-01",
   "features": [
+    {
+      "id": "left-nav",
+      "name": "Left Side Navigation",
+      "status": "passing",
+      "prd": "PRD-001",
+      "tasks": [
+        "Create SideNav component with Jobs, CV, Research, Settings",
+        "Add localStorage persistence for collapse state",
+        "Add keyboard shortcuts (G J, G C, G R, G S)",
+        "Auto-collapse on mobile"
+      ]
+    },
+    {
+      "id": "cv-module",
+      "name": "CV Module",
+      "status": "passing",
+      "prd": "PRD-002",
+      "tasks": [
+        "Create /cv page with text editor",
+        "Add CV API routes (CRUD)",
+        "Create Supabase cvs table migration",
+        "Add save/delete with confirmation"
+      ]
+    },
+    {
+      "id": "skills-matcher",
+      "name": "Skills Matcher",
+      "status": "passing",
+      "prd": "PRD-003",
+      "tasks": [
+        "Create analyze-match API endpoint",
+        "Integrate OpenAI for JD vs CV analysis",
+        "Add Skills Matcher UI to CardDetailModal",
+        "Display matched skills, gaps, talking points"
+      ]
+    },
     {
       "id": "setup",
       "name": "Project Setup",

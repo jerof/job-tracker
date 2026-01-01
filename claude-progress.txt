@@ -1,5 +1,46 @@
 # Claude Progress - Job Tracker
 
+## Session: 2026-01-01 (Left Nav, CV Module, Skills Matcher)
+
+### Completed: 3 Major Features in 4 Sprints
+
+Built complete features using expert agent team:
+
+**Sprint 1: Left Side Navigation**
+- `app/components/SideNav.tsx` - Collapsible sidebar with 4 nav items
+- `app/components/NavItem.tsx` - Reusable nav item component
+- `app/components/AppLayout.tsx` - Layout wrapper
+- Modified `app/layout.tsx` to use AppLayout
+- Keyboard shortcuts: G J, G C, G R, G S
+- localStorage persistence for collapse state
+- Auto-collapse on mobile (<768px)
+
+**Sprint 2: CV Module**
+- `app/cv/page.tsx` - CV management page
+- `app/api/cv/route.ts` - GET/POST endpoints
+- `app/api/cv/[id]/route.ts` - PUT/DELETE endpoints
+- `lib/cv.types.ts` - TypeScript interfaces
+- `supabase/migrations/004_cv_table.sql` - Database migration
+- Features: text editor, character count, save/delete with confirmation
+
+**Sprint 3: Skills Matcher**
+- `app/api/applications/[id]/analyze-match/route.ts` - AI analysis endpoint
+- `lib/skills-matcher.types.ts` - TypeScript interfaces
+- Updated `app/components/CardDetailModal.tsx` with Skills Matcher UI
+- Uses OpenAI GPT-4o-mini for JD vs CV analysis
+- Shows matched skills (green), gaps (amber), talking points
+
+**Sprint 4: Playwright Tests**
+- `tests/e2e/features.spec.ts` - E2E tests for all new features
+
+**Documentation:**
+- Updated `roadmap.md` with changelog
+- PRD-001, PRD-002, PRD-003 marked as "Shipped"
+
+**Commit:** 2410f7d - Pushed to GitHub
+
+---
+
 ## Session: 2025-12-31 (Chrome Extension)
 
 ### Completed: Chrome Extension (Phase 3)
