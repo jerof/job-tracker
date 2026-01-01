@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Application, ApplicationStatus, CloseReason } from '@/lib/types';
-import { SkillsMatchResult } from '@/lib/skills-matcher.types';
+import { ResearchChat } from './ResearchChat';
 
 // Tab types
-type TabId = 'details' | 'research' | 'prep' | 'timeline';
+type TabId = 'details' | 'research' | 'timeline';
 
 interface Tab {
   id: TabId;
@@ -16,8 +16,7 @@ interface Tab {
 const TABS: Tab[] = [
   { id: 'details', label: 'Details', shortcut: '1' },
   { id: 'research', label: 'Research', shortcut: '2' },
-  { id: 'prep', label: 'Prep', shortcut: '3' },
-  { id: 'timeline', label: 'Timeline', shortcut: '4' },
+  { id: 'timeline', label: 'Timeline', shortcut: '3' },
 ];
 
 interface Email {
@@ -35,30 +34,6 @@ interface EmailDetail extends Email {
   gmailUrl?: string;
 }
 
-interface ResearchData {
-  company: {
-    name: string;
-    domain: string | null;
-    logo: string | null;
-    description: string;
-    founded: string | null;
-    headquarters: string | null;
-    employeeCount: string | null;
-    funding: { stage: string | null; totalRaised: string | null } | null;
-    culture: string[];
-    recentNews: { title: string; date: string; summary: string }[];
-    competitors: string[];
-  };
-  role: {
-    title: string;
-    typicalResponsibilities: string[];
-    requiredSkills: string[];
-    interviewQuestions: string[];
-    questionsToAsk: string[];
-    salaryRange: string | null;
-  };
-  generatedAt: string;
-}
 
 interface StatusChange {
   id: string;
@@ -128,20 +103,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   const [jobUrl, setJobUrl] = useState(application.jobUrl || '');
   const [notes, setNotes] = useState(application.notes || '');
 
-  // Research tab state
-  const [researchData, setResearchData] = useState<ResearchData | null>(null);
-  const [researchLoading, setResearchLoading] = useState(false);
-  const [researchError, setResearchError] = useState<string | null>(null);
-
-  // Prep tab state
-  const [prepNotes, setPrepNotes] = useState('');
-  const [prepSaving, setPrepSaving] = useState(false);
-
-  // Skills Matcher state
-  const [skillsMatchResult, setSkillsMatchResult] = useState<SkillsMatchResult | null>(null);
-  const [skillsMatchLoading, setSkillsMatchLoading] = useState(false);
-  const [skillsMatchError, setSkillsMatchError] = useState<string | null>(null);
-  const [skillsMatchErrorCode, setSkillsMatchErrorCode] = useState<string | null>(null);
 
   // Timeline tab state
   const [statusHistory, setStatusHistory] = useState<StatusChange[]>([]);
@@ -201,72 +162,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
     fetchEmails();
   }, [application.id]);
 
-  // Fetch research data when research tab becomes active
-  useEffect(() => {
-    if (activeTab === 'research' && !researchData && !researchLoading) {
-      fetchResearch();
-    }
-  }, [activeTab]);
-
-  const fetchResearch = async () => {
-    setResearchLoading(true);
-    setResearchError(null);
-    try {
-      const response = await fetch('/api/research', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          company,
-          role,
-          jobUrl: jobUrl || undefined,
-          applicationId: application.id,  // Pass application ID for email context
-        }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setResearchData(data);
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        setResearchError(errorData.error || 'Failed to load research data');
-      }
-    } catch (error) {
-      console.error('Error fetching research:', error);
-      setResearchError('Failed to load research data');
-    } finally {
-      setResearchLoading(false);
-    }
-  };
-
-  // Skills Matcher API call
-  const analyzeSkillsMatch = async () => {
-    setSkillsMatchLoading(true);
-    setSkillsMatchError(null);
-    setSkillsMatchErrorCode(null);
-    try {
-      const response = await fetch(`/api/applications/${application.id}/analyze-match`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSkillsMatchResult(data);
-      } else {
-        setSkillsMatchError(data.error || 'Failed to analyze skills match');
-        setSkillsMatchErrorCode(data.code || null);
-      }
-    } catch (error) {
-      console.error('Error analyzing skills match:', error);
-      setSkillsMatchError('Failed to analyze skills match');
-    } finally {
-      setSkillsMatchLoading(false);
-    }
-  };
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -275,7 +170,7 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
       const target = e.target as HTMLElement;
       const isTyping = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
 
-      // Tab shortcuts (1-4) - only when not typing
+      // Tab shortcuts (1-3) - only when not typing
       if (!isTyping && !e.metaKey && !e.ctrlKey) {
         if (e.key === '1') {
           e.preventDefault();
@@ -288,11 +183,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
           return;
         }
         if (e.key === '3') {
-          e.preventDefault();
-          setActiveTab('prep');
-          return;
-        }
-        if (e.key === '4') {
           e.preventDefault();
           setActiveTab('timeline');
           return;
@@ -403,15 +293,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
       setCloseReason('withdrawn');
     }
     setShowStatusDropdown(false);
-  };
-
-  // Auto-save prep notes on blur
-  const handlePrepNotesBlur = async () => {
-    if (prepNotes !== application.notes) {
-      setPrepSaving(true);
-      // In a real implementation, this would save to the API
-      setTimeout(() => setPrepSaving(false), 500);
-    }
   };
 
   const formatDate = (dateString: string) => {
@@ -709,518 +590,13 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   );
 
   const renderResearchTab = () => (
-    <div className="animate-fadeIn px-6 py-5" data-testid="research-tab-content">
-      {researchLoading ? (
-        // Loading skeleton
-        <div className="space-y-6" data-testid="research-loading">
-          <div>
-            <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-3 animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-              <div className="h-4 w-4/5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-              <div className="h-4 w-3/5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-            </div>
-          </div>
-          <div>
-            <div className="h-5 w-20 bg-gray-200 dark:bg-gray-700 rounded mb-3 animate-pulse" />
-            <div className="space-y-2">
-              <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-              <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-            </div>
-          </div>
-        </div>
-      ) : researchError ? (
-        // Error state
-        <div className="text-center py-8" data-testid="research-error">
-          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">{researchError}</p>
-          <button
-            onClick={fetchResearch}
-            className="px-4 py-2 text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      ) : researchData ? (
-        // Research content
-        <div className="space-y-6">
-          {/* Company Header with Logo */}
-          <div data-testid="research-company-section">
-            <div className="flex items-start gap-3 mb-4">
-              {researchData.company.logo && (
-                <img
-                  src={researchData.company.logo}
-                  alt={`${researchData.company.name} logo`}
-                  className="w-12 h-12 rounded-lg object-contain bg-white border border-gray-200 dark:border-gray-700"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
-              )}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {researchData.company.name}
-                </h3>
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  {researchData.company.headquarters && (
-                    <span>{researchData.company.headquarters}</span>
-                  )}
-                  {researchData.company.founded && (
-                    <>
-                      <span>·</span>
-                      <span>Founded {researchData.company.founded}</span>
-                    </>
-                  )}
-                  {researchData.company.employeeCount && (
-                    <>
-                      <span>·</span>
-                      <span>{researchData.company.employeeCount} employees</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">About</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{researchData.company.description}</p>
-              </div>
-
-              {researchData.company.funding && (researchData.company.funding.stage || researchData.company.funding.totalRaised) && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Funding</h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {researchData.company.funding.stage}
-                    {researchData.company.funding.totalRaised && ` · ${researchData.company.funding.totalRaised} raised`}
-                  </p>
-                </div>
-              )}
-
-              {researchData.company.culture.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Culture</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {researchData.company.culture.map((trait, i) => (
-                      <span key={i} className="px-2 py-1 text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
-                        {trait}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {researchData.company.competitors.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Competitors</h4>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {researchData.company.competitors.join(', ')}
-                  </p>
-                </div>
-              )}
-
-              {researchData.company.recentNews.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Recent News</h4>
-                  <ul className="space-y-2">
-                    {researchData.company.recentNews.map((news, i) => (
-                      <li key={i} className="text-sm">
-                        <div className="font-medium text-gray-900 dark:text-white">{news.title}</div>
-                        <div className="text-gray-500 dark:text-gray-400 text-xs">{news.date}</div>
-                        <div className="text-gray-600 dark:text-gray-300 mt-0.5">{news.summary}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-200 dark:border-gray-700" />
-
-          {/* Role Section */}
-          <div data-testid="research-role-section">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              {researchData.role.title}
-            </h3>
-
-            {researchData.role.salaryRange && (
-              <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <span className="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide">Estimated Salary</span>
-                <p className="text-sm font-semibold text-green-700 dark:text-green-300 mt-0.5">{researchData.role.salaryRange}</p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {researchData.role.typicalResponsibilities.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Responsibilities</h4>
-                  <ul className="space-y-1">
-                    {researchData.role.typicalResponsibilities.map((item, i) => (
-                      <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                        <span className="text-violet-500 mt-1">•</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {researchData.role.requiredSkills.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Required Skills</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {researchData.role.requiredSkills.map((skill, i) => (
-                      <span key={i} className="px-2 py-1 text-xs font-medium bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {researchData.role.interviewQuestions.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Likely Interview Questions</h4>
-                  <ul className="space-y-1">
-                    {researchData.role.interviewQuestions.map((question, i) => (
-                      <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                        <span className="text-amber-500 mt-1">{i + 1}.</span>
-                        {question}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {researchData.role.questionsToAsk.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Questions to Ask</h4>
-                  <ul className="space-y-1">
-                    {researchData.role.questionsToAsk.map((question, i) => (
-                      <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                        <span className="text-green-500 mt-1">-&gt;</span>
-                        {question}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Generated timestamp and refresh */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              Generated {new Date(researchData.generatedAt).toLocaleDateString()}
-            </span>
-            <button
-              onClick={() => {
-                setResearchData(null);
-                fetchResearch();
-              }}
-              data-testid="refresh-research-button"
-              className="px-3 py-1.5 text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors flex items-center gap-1.5"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Refresh
-            </button>
-          </div>
-        </div>
-      ) : (
-        // Empty state - show when no research loaded yet
-        <div className="text-center py-8">
-          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">Research data not loaded</p>
-          <button
-            onClick={fetchResearch}
-            className="px-4 py-2 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors"
-          >
-            Load Research
-          </button>
-        </div>
-      )}
-    </div>
-  );
-
-  const renderSkillsMatchSection = () => {
-    // No CV state
-    if (skillsMatchErrorCode === 'NO_CV') {
-      return (
-        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                Upload your CV to enable skills matching
-              </p>
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                Your CV helps us identify matching skills and gaps for each job.
-              </p>
-              <a
-                href="/cv"
-                className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-amber-700 dark:text-amber-300 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                </svg>
-                Upload CV
-              </a>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Loading state
-    if (skillsMatchLoading) {
-      return (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <svg className="w-5 h-5 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
-            <span className="text-sm text-gray-600 dark:text-gray-400">Analyzing match...</span>
-          </div>
-        </div>
-      );
-    }
-
-    // Error state (non-CV related)
-    if (skillsMatchError && skillsMatchErrorCode !== 'NO_CV') {
-      return (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                {skillsMatchError}
-              </p>
-              <button
-                onClick={analyzeSkillsMatch}
-                className="mt-2 text-sm font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 transition-colors"
-              >
-                Try Again
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Results state
-    if (skillsMatchResult) {
-      return (
-        <div className="space-y-4">
-          {/* Match Score */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Match Score</span>
-            <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-              skillsMatchResult.matchScore >= 80
-                ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                : skillsMatchResult.matchScore >= 60
-                ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
-                : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-            }`}>
-              {skillsMatchResult.matchScore}%
-            </div>
-          </div>
-
-          {/* Matched Skills */}
-          {skillsMatchResult.matchedSkills.length > 0 && (
-            <div>
-              <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                Matched Skills
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {skillsMatchResult.matchedSkills.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Skill Gaps */}
-          {skillsMatchResult.skillGaps.length > 0 && (
-            <div>
-              <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                Skill Gaps
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {skillsMatchResult.skillGaps.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-1 text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Talking Points */}
-          {skillsMatchResult.talkingPoints.length > 0 && (
-            <div>
-              <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                Talking Points
-              </h4>
-              <ul className="space-y-2">
-                {skillsMatchResult.talkingPoints.map((point, i) => (
-                  <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                    <span className="text-violet-500 font-medium mt-0.5">{i + 1}.</span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Refresh button */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              Analyzed {new Date(skillsMatchResult.generatedAt).toLocaleDateString()}
-            </span>
-            <button
-              onClick={() => {
-                setSkillsMatchResult(null);
-                analyzeSkillsMatch();
-              }}
-              className="px-3 py-1.5 text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors flex items-center gap-1.5"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Re-analyze
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // Default: Show analyze button
-    return (
-      <div className="text-center py-4">
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Compare your CV against this job to see matching skills and gaps.
-        </p>
-        <button
-          onClick={analyzeSkillsMatch}
-          data-testid="analyze-match-button"
-          className="px-4 py-2 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors inline-flex items-center gap-2"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-          </svg>
-          Analyze Match
-        </button>
-      </div>
-    );
-  };
-
-  const renderPrepTab = () => (
-    <div className="animate-fadeIn px-6 py-5" data-testid="prep-tab-content">
-      {/* Skills Matcher Section */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-          </svg>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Skills Matcher</h3>
-        </div>
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          {renderSkillsMatchSection()}
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-gray-200 dark:border-gray-700 my-6" />
-
-      {/* Prep Notes Section */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <label htmlFor="prepNotes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Interview Preparation Notes
-          </label>
-          {prepSaving && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1" data-testid="prep-saving-indicator">
-              <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Saving...
-            </span>
-          )}
-        </div>
-        <textarea
-          id="prepNotes"
-          data-testid="prep-notes-textarea"
-          value={prepNotes}
-          onChange={(e) => setPrepNotes(e.target.value)}
-          onBlur={handlePrepNotesBlur}
-          rows={12}
-          className="w-full px-3 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-shadow resize-none font-mono text-sm"
-          placeholder={`## Questions to Expect
-- Tell me about yourself
-- Why are you interested in ${company}?
-- Describe a challenging project
-
-## Topics to Review
-- System design fundamentals
-- Company products and recent news
-- Role-specific technologies
-
-## Questions to Ask
-- What does success look like in this role?
-- How is the team structured?
-- What are the biggest challenges?`}
-        />
-      </div>
-
-      {/* Suggested sections */}
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-        <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Suggested Sections</h4>
-        <div className="flex flex-wrap gap-2">
-          {['Questions to Expect', 'Topics to Review', 'Questions to Ask', 'STAR Stories', 'Salary Research'].map((section) => (
-            <button
-              key={section}
-              onClick={() => {
-                const header = `\n\n## ${section}\n- `;
-                setPrepNotes(prev => prev + header);
-              }}
-              className="px-3 py-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              + {section}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="animate-fadeIn h-[calc(100vh-200px)]" data-testid="research-tab-content">
+      <ResearchChat
+        applicationId={application.id}
+        company={company}
+        role={role}
+        jobUrl={jobUrl || undefined}
+      />
     </div>
   );
 
@@ -1463,7 +839,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
         <div className="flex-1 overflow-y-auto">
           {activeTab === 'details' && renderDetailsTab()}
           {activeTab === 'research' && renderResearchTab()}
-          {activeTab === 'prep' && renderPrepTab()}
           {activeTab === 'timeline' && renderTimelineTab()}
         </div>
 

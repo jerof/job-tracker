@@ -2,14 +2,11 @@
 
 import { Application, ApplicationStatus } from '@/lib/types';
 import { Draggable } from '@hello-pangea/dnd';
-import { EmailIcon } from './EmailIcon';
 
 interface ApplicationCardProps {
   application: Application;
   index: number;
   onClick: (application: Application) => void;
-  emailCount?: number;
-  onEmailClick?: (application: Application) => void;
 }
 
 const STATUS_COLORS: Record<ApplicationStatus, string> = {
@@ -27,7 +24,7 @@ const CLOSE_REASON_STYLES: Record<string, { bg: string; text: string; dot: strin
   accepted: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500' },
 };
 
-export function ApplicationCard({ application, index, onClick, emailCount = 0, onEmailClick }: ApplicationCardProps) {
+export function ApplicationCard({ application, index, onClick }: ApplicationCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -42,12 +39,6 @@ export function ApplicationCard({ application, index, onClick, emailCount = 0, o
 
   const statusColor = STATUS_COLORS[application.status];
   const closeReasonStyle = application.closeReason ? CLOSE_REASON_STYLES[application.closeReason] : null;
-
-  const handleEmailClick = () => {
-    if (onEmailClick) {
-      onEmailClick(application);
-    }
-  };
 
   return (
     <Draggable draggableId={application.id} index={index}>
@@ -121,11 +112,6 @@ export function ApplicationCard({ application, index, onClick, emailCount = 0, o
                     </svg>
                     View
                   </a>
-                )}
-
-                {/* Email icon with count */}
-                {emailCount > 0 && onEmailClick && (
-                  <EmailIcon count={emailCount} onClick={handleEmailClick} />
                 )}
 
                 {/* Notes indicator */}

@@ -55,8 +55,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new CV
+    // Using a fixed UUID for single-user mode until auth is implemented
     const cvData = cvToDb({
-      userId: 'default-user', // TODO: Get from auth
+      userId: '00000000-0000-0000-0000-000000000001', // TODO: Get from auth
       rawText: body.rawText.trim(),
       fileName: body.fileName || null,
       pdfStoragePath: null,

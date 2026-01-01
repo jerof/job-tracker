@@ -9,7 +9,6 @@ import { SearchFilterBar } from './SearchFilterBar';
 import { AddApplicationModal } from './AddApplicationModal';
 import { EmptyState } from './EmptyState';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import { EmailSidePanel } from './EmailSidePanel';
 
 const COLUMNS: { id: ApplicationStatus; title: string }[] = [
   { id: 'saved', title: 'Saved' },
@@ -38,9 +37,6 @@ export function KanbanBoard() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeColumn, setActiveColumn] = useState<ApplicationStatus>('applied');
 
-  // Email panel state
-  const [emailPanelApp, setEmailPanelApp] = useState<{ id: string; company: string } | null>(null);
-  const [emailCounts, setEmailCounts] = useState<Record<string, number>>({});
 
   const SYNC_INTERVAL = 15 * 60 * 1000;
 
@@ -104,33 +100,6 @@ export function KanbanBoard() {
     });
   }, []);
 
-  // Fetch email counts for all applications
-  const fetchEmailCounts = useCallback(async (appIds: string[]) => {
-    if (appIds.length === 0) return;
-
-    try {
-      // Fetch email counts for each application in parallel
-      const countPromises = appIds.map(async (id) => {
-        try {
-          const response = await fetch(`/api/applications/${id}/emails`);
-          if (!response.ok) return { id, count: 0 };
-          const data = await response.json();
-          return { id, count: data.emails?.length || 0 };
-        } catch {
-          return { id, count: 0 };
-        }
-      });
-
-      const results = await Promise.all(countPromises);
-      const counts: Record<string, number> = {};
-      results.forEach(({ id, count }) => {
-        counts[id] = count;
-      });
-      setEmailCounts(counts);
-    } catch (error) {
-      console.error('Failed to fetch email counts:', error);
-    }
-  }, []);
 
   const fetchApplications = useCallback(async () => {
     try {
@@ -140,9 +109,6 @@ export function KanbanBoard() {
       setApplications(data.applications);
       setLastSynced(new Date());
       setUseMockData(false);
-      // Fetch email counts after applications load
-      const appIds = data.applications.map((app: Application) => app.id);
-      fetchEmailCounts(appIds);
     } catch (error) {
       console.log('API not available, using mock data:', error);
       setApplications(MOCK_APPLICATIONS);
@@ -150,7 +116,7 @@ export function KanbanBoard() {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchEmailCounts]);
+  }, []);
 
   const checkGmailStatus = useCallback(async () => {
     try {
@@ -266,14 +232,6 @@ export function KanbanBoard() {
   const handleCardClick = (application: Application) => setSelectedApp(application);
   const handleCloseModal = () => setSelectedApp(null);
 
-  // Email panel handlers
-  const handleEmailClick = (application: Application) => {
-    setEmailPanelApp({ id: application.id, company: application.company });
-  };
-
-  const handleCloseEmailPanel = () => {
-    setEmailPanelApp(null);
-  };
 
   const handleUpdateApplication = async (updated: Application) => {
     setApplications((prev) => prev.map((app) => (app.id === updated.id ? updated : app)));
@@ -797,8 +755,6 @@ export function KanbanBoard() {
                     title={column.title}
                     applications={getApplicationsByStatus(column.id)}
                     onCardClick={handleCardClick}
-                    emailCounts={emailCounts}
-                    onEmailClick={handleEmailClick}
                   />
                 ))}
               </div>
@@ -816,8 +772,6 @@ export function KanbanBoard() {
                       applications={getApplicationsByStatus(column.id)}
                       onCardClick={handleCardClick}
                       isMobile
-                      emailCounts={emailCounts}
-                      onEmailClick={handleEmailClick}
                     />
                   </div>
                 ))}
@@ -840,16 +794,6 @@ export function KanbanBoard() {
         <AddApplicationModal
           onClose={() => setShowAddModal(false)}
           onSave={handleAddApplication}
-        />
-      )}
-
-      {/* Email Side Panel */}
-      {emailPanelApp && (
-        <EmailSidePanel
-          applicationId={emailPanelApp.id}
-          companyName={emailPanelApp.company}
-          isOpen={!!emailPanelApp}
-          onClose={handleCloseEmailPanel}
         />
       )}
     </div>

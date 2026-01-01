@@ -11,8 +11,6 @@ interface KanbanColumnProps {
   applications: Application[];
   onCardClick: (application: Application) => void;
   isMobile?: boolean;
-  emailCounts?: Record<string, number>;
-  onEmailClick?: (application: Application) => void;
 }
 
 const COLUMN_CONFIG: Record<ApplicationStatus, {
@@ -79,8 +77,6 @@ export function KanbanColumn({
   applications,
   onCardClick,
   isMobile = false,
-  emailCounts = {},
-  onEmailClick
 }: KanbanColumnProps) {
   const config = COLUMN_CONFIG[id];
 
@@ -147,8 +143,6 @@ export function KanbanColumn({
                 application={app}
                 index={index}
                 onClick={onCardClick}
-                emailCount={emailCounts[app.id] || 0}
-                onEmailClick={onEmailClick}
               />
             ))}
             {provided.placeholder}
