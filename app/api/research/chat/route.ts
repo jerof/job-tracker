@@ -4,9 +4,16 @@ import { createServerClient } from '@/lib/supabase';
 import { searchWithPerplexity } from '@/lib/perplexity';
 import { ChatMessage, Source, ResearchChatRequest } from '@/lib/research-chat.types';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Lazy-initialize Anthropic client to avoid build-time errors
+let anthropicClient: Anthropic | null = null;
+function getAnthropic(): Anthropic {
+  if (!anthropicClient) {
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return anthropicClient;
+}
 
 const SYSTEM_PROMPT = `You are an expert company analyst helping a job candidate prepare for an interview.
 
@@ -149,7 +156,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Call Claude
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 2000,
       system: `${SYSTEM_PROMPT}\n\nCompany: ${context.company}\n${contextInfo}`,

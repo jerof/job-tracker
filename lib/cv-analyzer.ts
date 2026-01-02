@@ -1,8 +1,15 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Lazy-initialize Anthropic client to avoid build-time errors
+let anthropicClient: Anthropic | null = null;
+function getAnthropic(): Anthropic {
+  if (!anthropicClient) {
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return anthropicClient;
+}
 
 export type GapType = 'achievements' | 'skills' | 'target' | 'recent' | 'education' | 'project';
 export type CVQuality = 'good' | 'thin' | 'none';
@@ -130,7 +137,7 @@ export async function analyzeCV(cvText: string): Promise<CVAnalysisResult> {
   try {
     const prompt = CV_ANALYSIS_PROMPT.replace('{cvText}', trimmedCV.slice(0, 10000));
 
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-3-5-haiku-20241022',
       max_tokens: 1000,
       messages: [

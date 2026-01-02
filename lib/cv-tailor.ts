@@ -1,8 +1,15 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Lazy-initialize Anthropic client to avoid build-time errors
+let anthropicClient: Anthropic | null = null;
+function getAnthropic(): Anthropic {
+  if (!anthropicClient) {
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return anthropicClient;
+}
 
 // The HTML template matching the user's preferred CV format
 const CV_HTML_TEMPLATE = `<!DOCTYPE html>
@@ -299,7 +306,7 @@ export async function generateTailoredCV(input: TailoredCVInput): Promise<Tailor
     .replace('{feedback}', feedbackSection);
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 4000,
       messages: [
