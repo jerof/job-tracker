@@ -1,5 +1,43 @@
 # Claude Progress - Job Tracker
 
+## Session: 2026-01-02 (Research Chat Feature)
+
+### Completed: Major Refactor + Research Chat
+
+**Phase 1 - Cleanup:**
+- Removed Prep tab from CardDetailModal (~300 lines)
+- Removed EmailSidePanel from KanbanBoard (duplicate with Timeline)
+- Deleted 4 unused files, net -313 lines of code
+
+**Phase 2 - Research Chat Feature:**
+- New interactive chat interface replacing static research view
+- Components: ResearchChat, ChatMessage, SuggestedQuestions
+- API routes for chat messaging and history
+- Perplexity API integration for web search
+- Claude Sonnet for conversational responses
+- Chat history persisted in database
+- 4 initial suggestions, 3-4 follow-up suggestions per response
+
+**Files Created:**
+- `app/components/ResearchChat.tsx`
+- `app/components/ChatMessage.tsx`
+- `app/components/SuggestedQuestions.tsx`
+- `app/api/research/chat/route.ts`
+- `app/api/research/chat/[applicationId]/route.ts`
+- `lib/perplexity.ts`
+- `lib/research-chat.types.ts`
+- `supabase/migrations/005_research_chats.sql`
+- `docs/FEATURE_RESEARCH_CHAT.md`
+
+**To Use:**
+1. Run migration: `005_research_chats.sql`
+2. Add `PERPLEXITY_API_KEY` to `.env.local`
+3. Open application → Research tab → Ask questions
+
+**Commit:** e9c33f9
+
+---
+
 ## Session: 2026-01-01 (Left Nav, CV Module, Skills Matcher)
 
 ### Completed: 3 Major Features in 4 Sprints

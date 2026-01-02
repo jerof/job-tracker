@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Application, ApplicationStatus, CloseReason } from '@/lib/types';
-import { ResearchChat } from './ResearchChat';
+import { ResearchChatModal } from './ResearchChatModal';
 
 // Tab types
 type TabId = 'details' | 'research' | 'timeline';
@@ -117,6 +117,7 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showResearchModal, setShowResearchModal] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
@@ -590,13 +591,29 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   );
 
   const renderResearchTab = () => (
-    <div className="animate-fadeIn h-[calc(100vh-200px)]" data-testid="research-tab-content">
-      <ResearchChat
-        applicationId={application.id}
-        company={company}
-        role={role}
-        jobUrl={jobUrl || undefined}
-      />
+    <div className="animate-fadeIn px-6 py-8" data-testid="research-tab-content">
+      <div className="flex flex-col items-center justify-center text-center">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center mb-4 shadow-lg">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+          Research {company}
+        </h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-xs">
+          Ask questions about the company, their business model, challenges, and how to position yourself for the role.
+        </p>
+        <button
+          onClick={() => setShowResearchModal(true)}
+          className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-sm flex items-center gap-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          Start Research Chat
+        </button>
+      </div>
     </div>
   );
 
@@ -916,6 +933,16 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
           animation: fadeIn 0.15s ease-out;
         }
       `}</style>
+
+      {/* Research Chat Modal */}
+      <ResearchChatModal
+        isOpen={showResearchModal}
+        onClose={() => setShowResearchModal(false)}
+        applicationId={application.id}
+        company={company}
+        role={role}
+        jobUrl={jobUrl || undefined}
+      />
     </>
   );
 }

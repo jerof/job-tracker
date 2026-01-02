@@ -1,5 +1,6 @@
 'use client';
 
+import ReactMarkdown from 'react-markdown';
 import { ChatMessage as ChatMessageType } from '@/lib/research-chat.types';
 import { SuggestedQuestions } from './SuggestedQuestions';
 
@@ -24,9 +25,15 @@ export function ChatMessage({ message, onFollowupSelect, isLatest = false }: Cha
         `}
       >
         {/* Message content */}
-        <div className={`text-sm leading-relaxed whitespace-pre-wrap ${isUser ? '' : 'prose prose-sm dark:prose-invert max-w-none'}`}>
-          {message.content}
-        </div>
+        {isUser ? (
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">
+            {message.content}
+          </div>
+        ) : (
+          <div className="text-[13px] leading-relaxed [&>h1]:text-base [&>h1]:font-bold [&>h1]:mt-3 [&>h1]:mb-1.5 [&>h2]:text-sm [&>h2]:font-semibold [&>h2]:mt-3 [&>h2]:mb-1 [&>h3]:text-[13px] [&>h3]:font-semibold [&>h3]:mt-2 [&>h3]:mb-1 [&>p]:my-1.5 [&>ul]:my-1.5 [&>ul]:pl-4 [&>ul>li]:my-0.5 [&>ol]:my-1.5 [&>ol]:pl-4 [&_strong]:font-semibold">
+            <ReactMarkdown>{message.content}</ReactMarkdown>
+          </div>
+        )}
 
         {/* Sources (assistant only) */}
         {!isUser && message.sources && message.sources.length > 0 && (
