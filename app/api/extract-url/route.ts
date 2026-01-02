@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Fetch the page
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; JobTracker/1.0)',
+        'User-Agent': 'Mozilla/5.0 (compatible; Canopy/1.0)',
         'Accept': 'text/html',
       },
       signal: AbortSignal.timeout(10000), // 10s timeout

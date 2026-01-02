@@ -43,18 +43,19 @@ export default function OnboardingLayout({ children }: { children: ReactNode }) 
 
       {/* Logo */}
       <div className="fixed top-6 left-6 z-50">
-        <Link href="/" className="flex items-center gap-2 text-white font-semibold text-lg">
-          <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="8" fill="url(#logo-gradient)" />
-            <path d="M10 16L14 20L22 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <Link href="/" className="flex items-center gap-1.5 text-white font-semibold text-lg">
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="url(#logo-gradient-onboarding)" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="url(#logo-gradient-onboarding)" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="url(#logo-gradient-onboarding)" strokeWidth="1.5" strokeLinecap="round"/>
             <defs>
-              <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32">
-                <stop stopColor="#8B5CF6" />
-                <stop offset="1" stopColor="#6D28D9" />
+              <linearGradient id="logo-gradient-onboarding" x1="3" y1="4" x2="21" y2="18" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#6EE7B7"/>
+                <stop offset="1" stopColor="#34D399"/>
               </linearGradient>
             </defs>
           </svg>
-          <span>JobTracker</span>
+          <span>Canopy</span>
         </Link>
       </div>
 

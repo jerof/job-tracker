@@ -97,13 +97,19 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/80 backdrop-blur-lg border-b border-gray-100">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-          </div>
-          <span className="font-semibold text-gray-900">JobTracker</span>
+        <a href="/" className="flex items-center gap-1.5">
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="url(#logo-gradient-pricing-nav)" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="url(#logo-gradient-pricing-nav)" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="url(#logo-gradient-pricing-nav)" strokeWidth="1.5" strokeLinecap="round"/>
+            <defs>
+              <linearGradient id="logo-gradient-pricing-nav" x1="3" y1="4" x2="21" y2="18" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#059669"/>
+                <stop offset="1" stopColor="#0F766E"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span className="font-semibold text-gray-900">Canopy</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">
@@ -498,15 +504,21 @@ function Footer() {
     <footer className="py-16 bg-white border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <a href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            </div>
-            <span className="font-semibold text-gray-900">JobTracker</span>
+          <a href="/" className="flex items-center gap-1.5">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+              <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="url(#logo-gradient-pricing-footer)" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="url(#logo-gradient-pricing-footer)" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="url(#logo-gradient-pricing-footer)" strokeWidth="1.5" strokeLinecap="round"/>
+              <defs>
+                <linearGradient id="logo-gradient-pricing-footer" x1="3" y1="4" x2="21" y2="18" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#059669"/>
+                  <stop offset="1" stopColor="#0F766E"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="font-semibold text-gray-900">Canopy</span>
           </a>
-          <p className="text-sm text-gray-400">{new Date().getFullYear()} JobTracker. All rights reserved.</p>
+          <p className="text-sm text-gray-400">{new Date().getFullYear()} Canopy. All rights reserved.</p>
         </div>
       </div>
     </footer>

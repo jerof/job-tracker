@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Canopy Logo Concepts</title>
+  <style>
+    body {
+      font-family: -apple-system, system-ui, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 { color: #1a1a1a; margin-bottom: 40px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h2 { margin: 0 0 8px; font-size: 18px; }
+    .card p { margin: 0 0 24px; color: #666; font-size: 14px; }
+    .logo-container {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .logo-light, .logo-dark {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-light { background: #ffffff; border: 1px solid #e5e5e5; }
+    .logo-dark { background: #1a1a1a; }
+    .favicon-preview {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .favicon {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .color-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      background: #f0f0f0;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌿 Canopy Logo Concepts</h1>
+
+  <div class="grid">
+    <!-- Concept 1: Layered Shelter -->
+    <div class="card">
+      <h2>1. Layered Shelter</h2>
+      <p>Three stacked arcs - like looking up at a canopy</p>
+      <div class="logo-container">
+        <div class="logo-light">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M4 16C4 16 7.5 10 12 10C16.5 10 20 16 20 16" stroke="#1B4332" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 13C6 13 8.5 9 12 9C15.5 9 18 13 18 13" stroke="#1B4332" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 10C8 10 9.5 7 12 7C14.5 7 16 10 16 10" stroke="#1B4332" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-dark">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M4 16C4 16 7.5 10 12 10C16.5 10 20 16 20 16" stroke="#95D5B2" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 13C6 13 8.5 9 12 9C15.5 9 18 13 18 13" stroke="#95D5B2" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 10C8 10 9.5 7 12 7C14.5 7 16 10 16 10" stroke="#95D5B2" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="favicon-preview">
+        <span style="font-size:12px;color:#888">Favicon:</span>
+        <div class="favicon" style="background:#fff;border:1px solid #e5e5e5">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M4 16C4 16 7.5 10 12 10C16.5 10 20 16 20 16" stroke="#1B4332" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M6 13C6 13 8.5 9 12 9C15.5 9 18 13 18 13" stroke="#1B4332" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M8 10C8 10 9.5 7 12 7C14.5 7 16 10 16 10" stroke="#1B4332" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="favicon" style="background:#1a1a1a">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M4 16C4 16 7.5 10 12 10C16.5 10 20 16 20 16" stroke="#95D5B2" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M6 13C6 13 8.5 9 12 9C15.5 9 18 13 18 13" stroke="#95D5B2" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M8 10C8 10 9.5 7 12 7C14.5 7 16 10 16 10" stroke="#95D5B2" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <span class="color-chip"><span class="color-dot" style="background:#1B4332"></span>#1B4332 Deep Forest</span>
+      </div>
+    </div>
+
+    <!-- Concept 2: Crown C -->
+    <div class="card">
+      <h2>2. Crown C</h2>
+      <p>Letter C with leaf-like dots on top</p>
+      <div class="logo-container">
+        <div class="logo-light">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M19 8.5C19 8.5 17.5 4 12 4C6 4 4 9 4 12C4 15 6 20 12 20C17.5 20 19 15.5 19 15.5" stroke="#2D3436" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="18" cy="6" r="1.5" fill="#2D3436"/>
+            <circle cx="14" cy="4.5" r="1.5" fill="#2D3436"/>
+            <circle cx="10" cy="5" r="1.5" fill="#2D3436"/>
+          </svg>
+        </div>
+        <div class="logo-dark">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M19 8.5C19 8.5 17.5 4 12 4C6 4 4 9 4 12C4 15 6 20 12 20C17.5 20 19 15.5 19 15.5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="18" cy="6" r="1.5" fill="#ffffff"/>
+            <circle cx="14" cy="4.5" r="1.5" fill="#ffffff"/>
+            <circle cx="10" cy="5" r="1.5" fill="#ffffff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="favicon-preview">
+        <span style="font-size:12px;color:#888">Favicon:</span>
+        <div class="favicon" style="background:#fff;border:1px solid #e5e5e5">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M19 8.5C19 8.5 17.5 4 12 4C6 4 4 9 4 12C4 15 6 20 12 20C17.5 20 19 15.5 19 15.5" stroke="#2D3436" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="18" cy="6" r="2" fill="#2D3436"/>
+            <circle cx="14" cy="4.5" r="2" fill="#2D3436"/>
+            <circle cx="10" cy="5" r="2" fill="#2D3436"/>
+          </svg>
+        </div>
+        <div class="favicon" style="background:#1a1a1a">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M19 8.5C19 8.5 17.5 4 12 4C6 4 4 9 4 12C4 15 6 20 12 20C17.5 20 19 15.5 19 15.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="18" cy="6" r="2" fill="#fff"/>
+            <circle cx="14" cy="4.5" r="2" fill="#fff"/>
+            <circle cx="10" cy="5" r="2" fill="#fff"/>
+          </svg>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <span class="color-chip"><span class="color-dot" style="background:#2D3436"></span>#2D3436 Slate</span>
+      </div>
+    </div>
+
+    <!-- Concept 3: Triple Leaf -->
+    <div class="card">
+      <h2>3. Triple Leaf</h2>
+      <p>Three overlapping leaves pointing upward</p>
+      <div class="logo-container">
+        <div class="logo-light">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <ellipse cx="12" cy="10" rx="4" ry="6" fill="#059669"/>
+            <ellipse cx="8" cy="13" rx="3.5" ry="5.5" fill="#059669" transform="rotate(-20 8 13)"/>
+            <ellipse cx="16" cy="13" rx="3.5" ry="5.5" fill="#059669" transform="rotate(20 16 13)"/>
+          </svg>
+        </div>
+        <div class="logo-dark">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <ellipse cx="12" cy="10" rx="4" ry="6" fill="#34D399"/>
+            <ellipse cx="8" cy="13" rx="3.5" ry="5.5" fill="#34D399" transform="rotate(-20 8 13)"/>
+            <ellipse cx="16" cy="13" rx="3.5" ry="5.5" fill="#34D399" transform="rotate(20 16 13)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="favicon-preview">
+        <span style="font-size:12px;color:#888">Favicon:</span>
+        <div class="favicon" style="background:#fff;border:1px solid #e5e5e5">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <ellipse cx="12" cy="10" rx="4" ry="6" fill="#059669"/>
+            <ellipse cx="8" cy="13" rx="3.5" ry="5.5" fill="#059669" transform="rotate(-20 8 13)"/>
+            <ellipse cx="16" cy="13" rx="3.5" ry="5.5" fill="#059669" transform="rotate(20 16 13)"/>
+          </svg>
+        </div>
+        <div class="favicon" style="background:#1a1a1a">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <ellipse cx="12" cy="10" rx="4" ry="6" fill="#34D399"/>
+            <ellipse cx="8" cy="13" rx="3.5" ry="5.5" fill="#34D399" transform="rotate(-20 8 13)"/>
+            <ellipse cx="16" cy="13" rx="3.5" ry="5.5" fill="#34D399" transform="rotate(20 16 13)"/>
+          </svg>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <span class="color-chip"><span class="color-dot" style="background:#059669"></span>#059669 Emerald</span>
+      </div>
+    </div>
+
+    <!-- Concept 4: Arc Shield -->
+    <div class="card">
+      <h2>4. Arc Shield</h2>
+      <p>Minimal umbrella/shelter - Notion-level simple</p>
+      <div class="logo-container">
+        <div class="logo-light">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M4 14C4 8.5 7.5 5 12 5C16.5 5 20 8.5 20 14" stroke="#134E4A" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="12" y1="14" x2="12" y2="19" stroke="#134E4A" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-dark">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M4 14C4 8.5 7.5 5 12 5C16.5 5 20 8.5 20 14" stroke="#5EEAD4" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="12" y1="14" x2="12" y2="19" stroke="#5EEAD4" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="favicon-preview">
+        <span style="font-size:12px;color:#888">Favicon:</span>
+        <div class="favicon" style="background:#fff;border:1px solid #e5e5e5">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M4 14C4 8.5 7.5 5 12 5C16.5 5 20 8.5 20 14" stroke="#134E4A" stroke-width="3" stroke-linecap="round"/>
+            <line x1="12" y1="14" x2="12" y2="19" stroke="#134E4A" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="favicon" style="background:#1a1a1a">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M4 14C4 8.5 7.5 5 12 5C16.5 5 20 8.5 20 14" stroke="#5EEAD4" stroke-width="3" stroke-linecap="round"/>
+            <line x1="12" y1="14" x2="12" y2="19" stroke="#5EEAD4" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <span class="color-chip"><span class="color-dot" style="background:#134E4A"></span>#134E4A Midnight Teal</span>
+      </div>
+    </div>
+
+    <!-- Concept 5: Nested Curves -->
+    <div class="card">
+      <h2>5. Nested Curves</h2>
+      <p>Organic, elegant - looking up through canopy</p>
+      <div class="logo-container">
+        <div class="logo-light">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="#3D5A47" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="#3D5A47" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="#3D5A47" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-dark">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="#A3B18A" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="#A3B18A" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="#A3B18A" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="favicon-preview">
+        <span style="font-size:12px;color:#888">Favicon:</span>
+        <div class="favicon" style="background:#fff;border:1px solid #e5e5e5">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="#3D5A47" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="#3D5A47" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="#3D5A47" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="favicon" style="background:#1a1a1a">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="#A3B18A" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="#A3B18A" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="#A3B18A" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <span class="color-chip"><span class="color-dot" style="background:#3D5A47"></span>#3D5A47 Warm Earth</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;text-align:center;color:#888">
+    <p>Pick a number (1-5) and tell me which one you want!</p>
+  </div>
+</body>
+</html>

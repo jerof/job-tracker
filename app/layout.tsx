@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Job Tracker",
-  description: "Track your job applications effortlessly with Gmail sync",
+  title: "Canopy",
+  description: "Your Job Search OS - Track applications, research companies, and generate tailored CVs",
 };
 
 export default function RootLayout({

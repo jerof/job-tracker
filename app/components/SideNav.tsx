@@ -129,15 +129,21 @@ export function SideNav({ onCollapseChange }: SideNavProps) {
         ${isCollapsed ? 'px-2.5 justify-center' : 'px-3'}
         border-b border-slate-100 dark:border-slate-800
       `}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-            <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 4.5V3C6 2.17157 6.67157 1.5 7.5 1.5H10.5C11.3284 1.5 12 2.17157 12 3V4.5M2.25 6.75C2.25 5.92157 2.92157 5.25 3.75 5.25H14.25C15.0784 5.25 15.75 5.92157 15.75 6.75V14.25C15.75 15.0784 15.0784 15.75 14.25 15.75H3.75C2.92157 15.75 2.25 15.0784 2.25 14.25V6.75Z" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </div>
+        <div className="flex items-center gap-1.5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 18C3 10 7 4 12 4C17 4 21 10 21 18" stroke="url(#sidenav-logo-gradient)" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M6 17C6 11 8.5 6.5 12 6.5C15.5 6.5 18 11 18 17" stroke="url(#sidenav-logo-gradient)" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M9 16C9 12 10.5 9 12 9C13.5 9 15 12 15 16" stroke="url(#sidenav-logo-gradient)" strokeWidth="1.5" strokeLinecap="round"/>
+            <defs>
+              <linearGradient id="sidenav-logo-gradient" x1="3" y1="4" x2="21" y2="18" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#059669"/>
+                <stop offset="1" stopColor="#0F766E"/>
+              </linearGradient>
+            </defs>
+          </svg>
           {!isCollapsed && (
             <span className="text-[13px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-              JobTracker
+              Canopy
             </span>
           )}
         </div>

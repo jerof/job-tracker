@@ -258,7 +258,7 @@ export default function SuccessPage() {
           transition={{ delay: 0.7 }}
           className="mt-6 text-neutral-500 text-sm"
         >
-          Love it? Share JobTracker with a friend who&apos;s job hunting.
+          Love it? Share Canopy with a friend who&apos;s job hunting.
         </motion.p>
       </OnboardingCard>
     </>

@@ -1,7 +1,7 @@
 import '../styles/landing.css';
 
 export const metadata = {
-  title: 'JobTracker - Land Your Next Job, Faster',
+  title: 'Canopy - Land Your Next Job, Faster',
   description: 'Automatically track applications, generate tailored CVs, and research companies - all from one dashboard.',
 };
 
