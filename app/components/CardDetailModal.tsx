@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Application, ApplicationStatus, CloseReason } from '@/lib/types';
 import { ResearchChat } from './ResearchChat';
+import { TailoredCVSection } from './TailoredCVSection';
 
 // Tab types
 type TabId = 'details' | 'research' | 'timeline';
@@ -118,6 +119,12 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Tailored CV state
+  const [hasMasterCV, setHasMasterCV] = useState(false);
+  const [tailoredCvUrl, setTailoredCvUrl] = useState(application.tailoredCvUrl);
+  const [tailoredCvFilename, setTailoredCvFilename] = useState(application.tailoredCvFilename);
+  const [tailoredCvGeneratedAt, setTailoredCvGeneratedAt] = useState(application.tailoredCvGeneratedAt);
+
   const panelRef = useRef<HTMLDivElement>(null);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -162,6 +169,21 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
     fetchEmails();
   }, [application.id]);
 
+  // Check if user has master CV
+  useEffect(() => {
+    const checkMasterCV = async () => {
+      try {
+        const response = await fetch('/api/cv');
+        if (response.ok) {
+          const data = await response.json();
+          setHasMasterCV(!!data.cv?.rawText);
+        }
+      } catch (error) {
+        console.error('Error checking master CV:', error);
+      }
+    };
+    checkMasterCV();
+  }, []);
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -275,9 +297,26 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
       appliedDate: appliedDate || null,
       jobUrl: jobUrl || null,
       notes: notes || null,
+      tailoredCvUrl,
+      tailoredCvFilename,
+      tailoredCvGeneratedAt,
       updatedAt: new Date().toISOString(),
     });
     handleClose();
+  };
+
+  const handleCVGenerated = (data: { url: string; filename: string; generatedAt: string }) => {
+    setTailoredCvUrl(data.url);
+    setTailoredCvFilename(data.filename);
+    setTailoredCvGeneratedAt(data.generatedAt);
+    // Also update the application immediately
+    onUpdate({
+      ...application,
+      tailoredCvUrl: data.url,
+      tailoredCvFilename: data.filename,
+      tailoredCvGeneratedAt: data.generatedAt,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
   const handleDelete = () => {
@@ -585,6 +624,18 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
             placeholder="Add interview notes, contact info, or reminders..."
           />
         </div>
+
+        {/* Tailored CV Section */}
+        <TailoredCVSection
+          applicationId={application.id}
+          company={company}
+          jobUrl={jobUrl || null}
+          tailoredCvUrl={tailoredCvUrl}
+          tailoredCvFilename={tailoredCvFilename}
+          tailoredCvGeneratedAt={tailoredCvGeneratedAt}
+          hasMasterCV={hasMasterCV}
+          onCVGenerated={handleCVGenerated}
+        />
       </div>
     </div>
   );
@@ -778,7 +829,7 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
         aria-modal="true"
         aria-labelledby="modal-title"
         data-testid="card-detail-modal"
-        className={`fixed inset-4 md:inset-8 lg:inset-12 xl:inset-16 bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col rounded-2xl transform transition-all duration-200 ease-out ${
+        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-full max-w-4xl h-[85vh] max-h-[700px] bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col rounded-2xl overflow-hidden transform transition-all duration-200 ease-out ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
@@ -842,62 +893,78 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
           {activeTab === 'timeline' && renderTimelineTab()}
         </div>
 
-        {/* Footer - Only show for details tab */}
-        {activeTab === 'details' && (
-          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-            {showDeleteConfirm ? (
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Delete this application?</span>
-                <div className="flex items-center gap-2">
+        {/* Footer - Always visible for consistent height */}
+        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+          {activeTab === 'details' && (
+            <>
+              {showDeleteConfirm ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Delete this application?</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      className="px-3 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
                   <button
-                    onClick={() => setShowDeleteConfirm(false)}
-                    className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="px-3 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                   >
                     Delete
                   </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSave}
+                      disabled={!hasChanges}
+                      data-testid="save-button"
+                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                        hasChanges
+                          ? 'bg-violet-600 hover:bg-violet-700 text-white shadow-sm'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      Save Changes
+                      {hasChanges && (
+                        <span className="ml-2 text-violet-200 text-xs hidden sm:inline">Cmd+S</span>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                >
-                  Delete
-                </button>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={handleClose}
-                    className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    disabled={!hasChanges}
-                    data-testid="save-button"
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                      hasChanges
-                        ? 'bg-violet-600 hover:bg-violet-700 text-white shadow-sm'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    Save Changes
-                    {hasChanges && (
-                      <span className="ml-2 text-violet-200 text-xs hidden sm:inline">Cmd+S</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          )}
+          {activeTab === 'research' && (
+            <div className="flex items-center justify-end h-[40px]">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                Powered by web search + AI
+              </span>
+            </div>
+          )}
+          {activeTab === 'timeline' && (
+            <div className="flex items-center justify-end h-[40px]">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                {emails.length} email{emails.length !== 1 ? 's' : ''} synced
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Custom CSS for animations */}

@@ -1,49 +1,25 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { CV } from '@/lib/cv.types';
-import { Button } from '@/app/components/ui/Button';
+import CVGrid from '@/app/components/CVGrid';
 
-// Icons
-const DocumentIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 8C12 5.79086 13.7909 4 16 4H28.3431C29.404 4 30.4214 4.42143 31.1716 5.17157L39.8284 13.8284C40.5786 14.5786 41 15.596 41 16.6569V40C41 42.2091 39.2091 44 37 44H16C13.7909 44 12 42.2091 12 40V8Z" stroke="currentColor" strokeWidth="2"/>
-    <path d="M28 4V12C28 14.2091 29.7909 16 32 16H40" stroke="currentColor" strokeWidth="2"/>
-    <path d="M18 26H34M18 34H28" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-);
-
-const ClipboardIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6.5 3.5H5C3.89543 3.5 3 4.39543 3 5.5V16C3 17.1046 3.89543 18 5 18H15C16.1046 18 17 17.1046 17 16V5.5C17 4.39543 16.1046 3.5 15 3.5H13.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    <path d="M7 2.5C7 1.94772 7.44772 1.5 8 1.5H12C12.5523 1.5 13 1.94772 13 2.5V4.5C13 5.05228 12.5523 5.5 12 5.5H8C7.44772 5.5 7 5.05228 7 4.5V2.5Z" stroke="currentColor" strokeWidth="1.5"/>
-  </svg>
-);
-
-const TrashIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 4.5H15M6.75 4.5V3C6.75 2.17157 7.42157 1.5 8.25 1.5H9.75C10.5784 1.5 11.25 2.17157 11.25 3V4.5M5.25 7.5V14.25C5.25 15.0784 5.92157 15.75 6.75 15.75H11.25C12.0784 15.75 12.75 15.0784 12.75 14.25V7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const SaveIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6.75 15.75L9 13.5L11.25 15.75M9 9V13.5M15.75 8.25V14.25C15.75 15.0784 15.0784 15.75 14.25 15.75H3.75C2.92157 15.75 2.25 15.0784 2.25 14.25V3.75C2.25 2.92157 2.92157 2.25 3.75 2.25H11.25L15.75 6.75V8.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+interface MasterCV {
+  id: string;
+  rawText: string;
+  updatedAt: string;
+}
 
 export default function CVPage() {
-  const [cv, setCV] = useState<CV | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [showEditor, setShowEditor] = useState(false);
+  const [cv, setCV] = useState<MasterCV | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [cvText, setCvText] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch CV on mount
-  const fetchCV = useCallback(async () => {
+  // Fetch master CV when editor opens
+  const fetchMasterCV = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -64,10 +40,6 @@ export default function CVPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchCV();
-  }, [fetchCV]);
-
   // Track changes
   useEffect(() => {
     if (cv) {
@@ -76,6 +48,18 @@ export default function CVPage() {
       setHasChanges(cvText.trim().length > 0);
     }
   }, [cvText, cv]);
+
+  // Open editor
+  const handleEditMaster = async () => {
+    setShowEditor(true);
+    await fetchMasterCV();
+  };
+
+  const handleAddMaster = () => {
+    setShowEditor(true);
+    setCV(null);
+    setCvText('');
+  };
 
   // Handle save
   const handleSave = async () => {
@@ -89,7 +73,6 @@ export default function CVPage() {
 
     try {
       if (cv) {
-        // Update existing CV
         const response = await fetch(`/api/cv/${cv.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -101,8 +84,9 @@ export default function CVPage() {
         const data = await response.json();
         setCV(data.cv);
         setHasChanges(false);
+        setShowEditor(false);
+        window.location.reload(); // Refresh to update grid
       } else {
-        // Create new CV
         const response = await fetch('/api/cv', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -114,6 +98,8 @@ export default function CVPage() {
         const data = await response.json();
         setCV(data.cv);
         setHasChanges(false);
+        setShowEditor(false);
+        window.location.reload(); // Refresh to update grid
       }
     } catch (err) {
       console.error('Error saving CV:', err);
@@ -123,88 +109,29 @@ export default function CVPage() {
     }
   };
 
-  // Handle delete
-  const handleDelete = async () => {
-    if (!cv) return;
-
-    setIsDeleting(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/cv/${cv.id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) throw new Error('Failed to delete CV');
-
-      setCV(null);
-      setCvText('');
-      setShowDeleteConfirm(false);
-    } catch (err) {
-      console.error('Error deleting CV:', err);
-      setError('Failed to delete CV. Please try again.');
-    } finally {
-      setIsDeleting(false);
+  // Handle close
+  const handleCloseEditor = () => {
+    if (hasChanges) {
+      if (!confirm('You have unsaved changes. Are you sure you want to close?')) {
+        return;
+      }
     }
+    setShowEditor(false);
+    setCvText('');
+    setError(null);
   };
 
-  // Loading skeleton
-  if (isLoading) {
-    return (
-      <div className="h-full flex flex-col bg-slate-100 dark:bg-slate-950">
-        <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4">
-          <div className="h-6 w-32 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
-        </header>
-        <div className="flex-1 p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
-              <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded animate-pulse mb-4" />
-              <div className="h-64 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="h-full flex flex-col bg-slate-100 dark:bg-slate-950">
+    <div className="h-full flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+      <header className="bg-white border-b border-gray-200">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
-                CV
-              </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                {cv ? 'Edit your CV content below' : 'Paste your CV content to get started'}
+              <h1 className="text-lg font-semibold text-gray-900">CV Library</h1>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Manage your master CV and tailored versions
               </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {cv && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="text-slate-500 hover:text-red-600 dark:hover:text-red-400"
-                >
-                  <TrashIcon />
-                  <span className="hidden sm:inline ml-1.5">Delete</span>
-                </Button>
-              )}
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleSave}
-                disabled={!hasChanges || isSaving}
-                isLoading={isSaving}
-                data-testid="cv-save-button"
-              >
-                <SaveIcon />
-                <span className="ml-1.5">{cv ? 'Save Changes' : 'Save CV'}</span>
-              </Button>
             </div>
           </div>
         </div>
@@ -212,63 +139,70 @@ export default function CVPage() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Error Alert */}
-          {error && (
-            <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 text-sm">
-              {error}
-            </div>
-          )}
+        <div className="max-w-6xl mx-auto">
+          <CVGrid
+            onEditMaster={handleEditMaster}
+            onAddMaster={handleAddMaster}
+          />
+        </div>
+      </div>
 
-          {/* Empty State */}
-          {!cv && !cvText && (
-            <div data-testid="cv-empty-state" className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-12">
-              <div className="text-center max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-400">
-                  <DocumentIcon />
+      {/* Master CV Editor Modal */}
+      {showEditor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={handleCloseEditor}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-semibold rounded-md">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  MASTER
                 </div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  No CV uploaded yet
+                <h2 className="font-semibold text-gray-900">
+                  {cv ? 'Edit Master CV' : 'Add Master CV'}
                 </h2>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
-                  Paste your CV content below to save it. You can edit and update it anytime.
-                </p>
-                <div className="flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                  <ClipboardIcon />
-                  <span>Paste text in the editor below</span>
-                </div>
               </div>
-            </div>
-          )}
-
-          {/* CV Editor Card */}
-          <div className={`bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden ${!cv && !cvText ? 'mt-6' : ''}`}>
-            {/* Editor Header */}
-            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  CV Content
-                </span>
-                {hasChanges && (
-                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
-                    Unsaved changes
-                  </span>
-                )}
-              </div>
-              {cv && (
-                <span className="text-xs text-slate-400 dark:text-slate-500">
-                  Last updated: {new Date(cv.updatedAt).toLocaleDateString()}
-                </span>
-              )}
+              <button
+                onClick={handleCloseEditor}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
-            {/* Editor */}
-            <div className="p-4">
-              <textarea
-                data-testid="cv-textarea"
-                value={cvText}
-                onChange={(e) => setCvText(e.target.value)}
-                placeholder="Paste your CV content here...
+            {/* Editor Content */}
+            <div className="flex-1 overflow-auto p-6">
+              {isLoading ? (
+                <div className="h-64 bg-gray-100 rounded-lg animate-pulse" />
+              ) : (
+                <>
+                  {/* Error Alert */}
+                  {error && (
+                    <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                      {error}
+                    </div>
+                  )}
+
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">CV Content</span>
+                    {hasChanges && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-700">
+                        Unsaved changes
+                      </span>
+                    )}
+                  </div>
+                  <textarea
+                    value={cvText}
+                    onChange={(e) => setCvText(e.target.value)}
+                    placeholder="Paste your CV content here...
 
 Example:
 John Doe
@@ -281,63 +215,50 @@ Senior Developer at TechCorp (2020-Present)
 
 EDUCATION
 BS in Computer Science, MIT (2016)"
-                className="w-full h-[500px] p-4 text-sm font-mono text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-500 dark:focus:border-violet-400 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-              />
+                    className="w-full h-96 p-4 text-sm font-mono text-gray-700 bg-gray-50 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-500 placeholder:text-gray-400"
+                  />
+                  <div className="mt-2 text-xs text-gray-400">
+                    {cvText.length.toLocaleString()} characters
+                  </div>
+                </>
+              )}
             </div>
 
-            {/* Character Count */}
-            <div className="px-4 py-2 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-xs text-slate-400 dark:text-slate-500">
-                {cvText.length.toLocaleString()} characters
-              </span>
-            </div>
-          </div>
-
-          {/* Tips */}
-          <div className="mt-6 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30">
-            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">
-              Tips for a great CV
-            </h3>
-            <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
-              <li>Keep it concise - 1-2 pages is ideal</li>
-              <li>Include quantifiable achievements where possible</li>
-              <li>Tailor your CV for each job application</li>
-              <li>Proofread carefully before sending</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowDeleteConfirm(false)}
-          />
-          <div className="relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 max-w-sm w-full shadow-xl">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-              Delete CV?
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-              This action cannot be undone. Your CV content will be permanently deleted.
-            </p>
-            <div className="flex items-center justify-end gap-3">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={handleDelete}
-                isLoading={isDeleting}
-              >
-                Delete
-              </Button>
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50">
+              <p className="text-xs text-gray-500">
+                Your master CV is used as the base for generating tailored CVs
+              </p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleCloseEditor}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={!hasChanges || isSaving}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 rounded-lg shadow-sm shadow-amber-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSaving ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Save Changes
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -2,6 +2,20 @@ export type ApplicationStatus = 'saved' | 'applied' | 'interviewing' | 'offer' |
 
 export type CloseReason = 'rejected' | 'withdrawn' | 'ghosted' | 'accepted';
 
+export type CVType = 'master' | 'tailored';
+
+export interface CV {
+  id: string;
+  type: CVType;
+  filename: string;
+  url: string | null;
+  company?: string;
+  role?: string;
+  applicationId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Application {
   id: string;
   company: string;
@@ -13,6 +27,10 @@ export interface Application {
   sourceEmailId: string | null;
   jobUrl: string | null;
   notes: string | null;
+  // Tailored CV fields
+  tailoredCvUrl: string | null;
+  tailoredCvFilename: string | null;
+  tailoredCvGeneratedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,6 +60,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: 'https://openai.com/careers/research-engineer',
     notes: 'Found on Twitter, looks interesting',
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-28T10:00:00Z',
     updatedAt: '2025-12-28T10:00:00Z',
   },
@@ -56,6 +77,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: null,
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-20T10:00:00Z',
     updatedAt: '2025-12-20T10:00:00Z',
   },
@@ -70,6 +94,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: null,
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-22T10:00:00Z',
     updatedAt: '2025-12-22T10:00:00Z',
   },
@@ -84,6 +111,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: null,
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-23T10:00:00Z',
     updatedAt: '2025-12-23T10:00:00Z',
   },
@@ -98,6 +128,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: 'Phone screen scheduled for Dec 30',
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-15T10:00:00Z',
     updatedAt: '2025-12-25T10:00:00Z',
   },
@@ -112,6 +145,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: null,
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-18T10:00:00Z',
     updatedAt: '2025-12-24T10:00:00Z',
   },
@@ -126,6 +162,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: 'Offer received! Reviewing terms',
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-10T10:00:00Z',
     updatedAt: '2025-12-27T10:00:00Z',
   },
@@ -140,6 +179,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: null,
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-05T10:00:00Z',
     updatedAt: '2025-12-20T10:00:00Z',
   },
@@ -154,6 +196,9 @@ export const MOCK_APPLICATIONS: Application[] = [
     sourceEmailId: null,
     jobUrl: null,
     notes: 'Withdrew after Anthropic offer',
+    tailoredCvUrl: null,
+    tailoredCvFilename: null,
+    tailoredCvGeneratedAt: null,
     createdAt: '2025-12-01T10:00:00Z',
     updatedAt: '2025-12-27T10:00:00Z',
   },

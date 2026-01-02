@@ -196,6 +196,9 @@ export function AddApplicationModal({ onClose, onSave, defaultStatus = 'applied'
       sourceEmailId: null,
       jobUrl: jobUrl.trim() || null,
       notes: notes.trim() || null,
+      tailoredCvUrl: null,
+      tailoredCvFilename: null,
+      tailoredCvGeneratedAt: null,
     });
   };
 

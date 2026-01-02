@@ -1,5 +1,55 @@
 # Claude Progress - Job Tracker
 
+## Session: 2026-01-02 (CV Library + CV Tailor)
+
+### Completed: CV Library Feature
+
+**CV Library (cards-based view on /cv page):**
+- Grid layout showing all CVs (master + tailored)
+- Master CV card with orange gradient styling
+- Tailored CV cards show company, role, date
+- Filter tabs: All / Master / Tailored
+- Click card to preview PDF in modal
+- Delete tailored CVs with confirmation
+- Empty states for no CVs
+
+**Files Created:**
+- `app/components/CVCard.tsx` - Tailored CV card
+- `app/components/MasterCVCard.tsx` - Master CV card with special styling
+- `app/components/CVPreviewModal.tsx` - PDF preview modal
+- `app/components/CVGrid.tsx` - Grid with filtering and state management
+- `app/api/cvs/route.ts` - GET all CVs endpoint
+- `app/api/cvs/[id]/route.ts` - DELETE tailored CV endpoint
+- `lib/types.ts` - Added CV type
+- `docs/FEATURE_CV_LIBRARY.md` - Feature specification
+
+**Updated:**
+- `app/cv/page.tsx` - Replaced text editor with CV Library grid
+
+### Previous Work Today: CV Tailor Feature
+
+**CV Tailor (generate tailored CVs per application):**
+- Takes master CV + job URL
+- Fetches JD from URL
+- Generates tailored 1-page CV via Claude Sonnet
+- Converts to PDF via Puppeteer
+- Stores in Supabase Storage
+- UI in CardDetailModal Details tab
+
+**Files Created:**
+- `lib/cv-tailor.ts` - AI CV generation logic
+- `lib/pdf-generator.ts` - Puppeteer PDF generation
+- `app/api/applications/[id]/tailored-cv/route.ts` - GET/POST endpoints
+- `app/components/TailoredCVSection.tsx` - UI component
+- `supabase/migrations/006_tailored_cv.sql` - Added tailored_cv columns
+- `docs/FEATURE_CV_TAILOR.md` - Feature specification
+
+### Next Steps
+1. Refine and implement "Master CV tagging" feature
+2. Refine and implement "Auto-generate CV on save" feature
+
+---
+
 ## Session: 2026-01-02 (Research Chat Feature)
 
 ### Completed: Major Refactor + Research Chat
