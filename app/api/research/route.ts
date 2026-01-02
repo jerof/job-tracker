@@ -3,10 +3,16 @@ import OpenAI from 'openai';
 import { createServerClient } from '@/lib/supabase';
 import { ResearchRequest, ResearchResponse, DbCompanyResearch } from '@/lib/research.types';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy-initialize OpenAI client to avoid build-time errors
+let openaiClient: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openaiClient;
+}
 
 // Cache duration: 7 days in milliseconds
 const CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -225,7 +231,7 @@ Respond with ONLY valid JSON, no markdown code blocks or other text:
   }
 }`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
