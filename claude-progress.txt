@@ -44,9 +44,20 @@
 - `supabase/migrations/006_tailored_cv.sql` - Added tailored_cv columns
 - `docs/FEATURE_CV_TAILOR.md` - Feature specification
 
+### Auto-Generate CV on Save (c87c50b)
+
+- CVs auto-generate in background when jobs saved with URL
+- CV badge on job cards in Kanban board
+- Click badge to view/download tailored CV PDF
+
+**Files:**
+- `lib/cv-auto-generate.ts` - Background CV generation
+- Updated `app/api/applications/route.ts` - Trigger on POST
+- Updated `app/api/applications/[id]/route.ts` - Trigger on PATCH
+- Updated `app/components/ApplicationCard.tsx` - CV badge
+
 ### Next Steps
-1. Refine and implement "Master CV tagging" feature
-2. Refine and implement "Auto-generate CV on save" feature
+1. Test auto-generation flow end-to-end
 
 ---
 

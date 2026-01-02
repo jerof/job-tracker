@@ -189,6 +189,7 @@ CRITICAL RULES:
 3. Reframe emphasis to highlight skills matching the job description
 4. Remove or minimize irrelevant roles to fit on a single page
 5. Keep bullet points concise with metrics where available
+6. NEVER remove any educational experience - include ALL education from the master CV
 
 MASTER CV:
 {masterCV}
