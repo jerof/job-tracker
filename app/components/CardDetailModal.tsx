@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Application, ApplicationStatus, CloseReason } from '@/lib/types';
-import { ResearchChatModal } from './ResearchChatModal';
+import { ResearchChat } from './ResearchChat';
 
 // Tab types
 type TabId = 'details' | 'research' | 'timeline';
@@ -117,7 +117,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showResearchModal, setShowResearchModal] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
@@ -591,29 +590,13 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
   );
 
   const renderResearchTab = () => (
-    <div className="animate-fadeIn px-6 py-8" data-testid="research-tab-content">
-      <div className="flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center mb-4 shadow-lg">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-          Research {company}
-        </h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-xs">
-          Ask questions about the company, their business model, challenges, and how to position yourself for the role.
-        </p>
-        <button
-          onClick={() => setShowResearchModal(true)}
-          className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-sm flex items-center gap-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-          Start Research Chat
-        </button>
-      </div>
+    <div className="animate-fadeIn h-full" data-testid="research-tab-content">
+      <ResearchChat
+        applicationId={application.id}
+        company={company}
+        role={role}
+        jobUrl={jobUrl || undefined}
+      />
     </div>
   );
 
@@ -788,19 +771,19 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
         aria-hidden="true"
       />
 
-      {/* Panel - Slide in from right */}
+      {/* Centered Modal */}
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
         data-testid="card-detail-modal"
-        className={`fixed inset-y-0 right-0 w-full sm:w-[520px] bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col transform transition-transform duration-200 ease-out ${
-          isVisible ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed inset-4 md:inset-8 lg:inset-12 xl:inset-16 bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col rounded-2xl transform transition-all duration-200 ease-out ${
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 rounded-t-2xl">
           <div className="flex items-center gap-3">
             {/* Company Avatar */}
             <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getCompanyColor(company)} flex items-center justify-center text-white font-semibold text-sm shadow-sm`}>
@@ -934,15 +917,6 @@ export function CardDetailModal({ application, onClose, onUpdate, onDelete }: Ca
         }
       `}</style>
 
-      {/* Research Chat Modal */}
-      <ResearchChatModal
-        isOpen={showResearchModal}
-        onClose={() => setShowResearchModal(false)}
-        applicationId={application.id}
-        company={company}
-        role={role}
-        jobUrl={jobUrl || undefined}
-      />
     </>
   );
 }
