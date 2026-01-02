@@ -1,5 +1,64 @@
 # Claude Progress - Job Tracker
 
+## Session: 2026-01-02 (Landing Page Design System)
+
+### Completed: Visual Design System for Landing Page & Onboarding
+
+Created comprehensive design system inspired by Attio, Linear, Claude, and Intercom.
+
+**Design System Documentation:**
+- `docs/DESIGN_SYSTEM_LANDING.md` - Full visual system specification
+  - Color palette (Primary Violet, Secondary Coral, Warm Slate neutrals)
+  - Typography scale (Display through caption sizes)
+  - Spacing system based on 4px grid
+  - Component styles (buttons, cards, inputs, badges)
+  - Animation principles and micro-interactions
+  - Hero section layouts (light/dark variants)
+  - Onboarding flow design patterns
+  - Accessibility guidelines
+
+**Implementation Files:**
+- `app/styles/landing.css` - Ready-to-use CSS classes
+  - Hero section styles
+  - Navigation component
+  - Feature cards
+  - Testimonial cards
+  - Stats section
+  - CTA section
+  - Onboarding UI
+  - Scroll reveal animations
+  - Floating elements/badges
+
+**React Components:**
+- `app/components/landing/LandingComponents.tsx` - Reusable components
+  - LandingNav (fixed nav with scroll effect)
+  - Hero (light/dark variants)
+  - Section + SectionHeader
+  - FeatureCard (with reveal animation)
+  - StatsGrid
+  - TestimonialCard
+  - CTASection
+  - Badge
+  - Button (primary/secondary/ghost)
+  - LandingFooter
+  - useRevealOnScroll hook
+
+**Brand Personality Defined:**
+- Professional but not corporate
+- Modern and clean
+- Trustworthy (secure feeling)
+- Slightly playful (reduces job search stress)
+
+**Key Design Decisions:**
+- Primary color: Violet #8B5CF6 (Linear-inspired)
+- Accent: Coral #F43F5E (for celebrations/playfulness)
+- Dark mode: Deep navy #09090B with purple glow
+- Border radius: 8-16px (modern, approachable)
+- Shadows: Subtle with border fallback (Linear-style)
+- Animations: 150-200ms for interactions, 300-500ms for reveals
+
+---
+
 ## Session: 2026-01-02 (CV Library + CV Tailor)
 
 ### Completed: CV Library Feature
@@ -187,7 +246,8 @@ Fixed research API to use REAL data from job postings:
 
 ## Next Steps
 
-1. Add icons to extension (optional - works without)
-2. Deploy to production and update extension's API_BASE_URL
-3. Consider publishing to Chrome Web Store
-4. Phase 4: Resume Management (file upload, version tracking)
+1. Build actual landing page using the design system
+2. Create onboarding flow pages
+3. Add icons to extension (optional - works without)
+4. Deploy to production and update extension's API_BASE_URL
+5. Consider publishing to Chrome Web Store
