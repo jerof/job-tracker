@@ -1,5 +1,83 @@
 # Claude Progress - Job Tracker
 
+## Session: 2026-01-02 (Stripe Integration)
+
+### Completed: Full Stripe Payment Integration
+
+Implemented complete Stripe integration for subscription billing and one-time payments.
+
+**Files Created:**
+
+1. **Stripe Client** (`lib/stripe.ts`)
+   - Initialize Stripe with secret key (API version 2025-12-15.clover)
+   - Helper functions: getOrCreateCustomer, createCheckoutSession, createBillingPortalSession
+   - Subscription management: getSubscription, cancelSubscription
+   - Webhook signature verification: constructWebhookEvent
+
+2. **Price Constants** (`lib/stripe-prices.ts`)
+   - Price ID constants from environment variables
+   - Plan metadata with features and limits
+   - Tier types: free, pro, power
+   - Helper functions: getTierFromPriceId, getCvLimitForTier, hasReachedCvLimit, getPaymentMode
+   - Job Search Pass one-time payment config
+
+3. **Checkout API** (`app/api/stripe/create-checkout/route.ts`)
+   - POST endpoint for creating checkout sessions
+   - Input: `{ priceId, successUrl?, cancelUrl? }`
+   - Validates priceId against allowed prices
+   - Creates/retrieves Stripe customer
+   - Supports both subscription and one-time payment modes
+   - Returns checkout URL and session ID
+
+4. **Webhook Handler** (`app/api/stripe/webhooks/route.ts`)
+   - POST endpoint receiving raw body
+   - Signature verification with STRIPE_WEBHOOK_SECRET
+   - Events handled:
+     - `checkout.session.completed` - Activate subscription or add Job Search Pass credits
+     - `customer.subscription.updated` - Handle plan changes (upgrades/downgrades)
+     - `customer.subscription.deleted` - Downgrade to free tier
+     - `invoice.payment_failed` - Update status, log failure
+     - `invoice.paid` - Reset monthly CV usage
+   - All events logged to billing_events table
+   - Returns 200 quickly to acknowledge receipt
+
+5. **Customer Portal** (`app/api/stripe/portal/route.ts`)
+   - POST endpoint for billing portal access
+   - Creates Stripe billing portal session
+   - Returns portal URL for subscription management
+
+**Database Schema** (already exists: `supabase/migrations/007_billing_and_usage.sql`)
+- `user_billing` table with subscription fields
+- `billing_events` table for audit trail
+- `usage_logs` table for CV generation tracking
+- Helper functions: check_can_generate_cv, get_user_usage, increment_cv_usage
+
+**Environment Variables Required:**
+```
+STRIPE_SECRET_KEY=sk_...
+STRIPE_PUBLISHABLE_KEY=pk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_PRO_MONTHLY=price_...
+STRIPE_PRICE_PRO_YEARLY=price_...
+STRIPE_PRICE_POWER_MONTHLY=price_...
+STRIPE_PRICE_POWER_YEARLY=price_...
+STRIPE_PRICE_JOB_SEARCH_PASS=price_...
+```
+
+**Pricing Tiers:**
+- Free: 3 CVs/month, basic features
+- Pro ($9/mo or $69/yr): 30 CVs/month, Gmail sync, research chat
+- Power ($19/mo or $149/yr): Unlimited CVs, cover letters, interview prep
+- Job Search Pass ($39 one-time): 50 CVs + 6 months Pro features
+
+**Next Steps:**
+1. Create Stripe products/prices in dashboard
+2. Set up webhook endpoint in Stripe dashboard
+3. Test checkout flow end-to-end
+4. Build pricing page UI
+
+---
+
 ## Session: 2026-01-02 (Landing Page Design System)
 
 ### Completed: Visual Design System for Landing Page & Onboarding
@@ -244,10 +322,97 @@ Fixed research API to use REAL data from job postings:
 
 ---
 
+## Session: 2026-01-02 (Onboarding Feature Specification)
+
+### Completed: FEATURE_ONBOARDING_CV_BOOSTER.md
+
+Created comprehensive feature specification for the onboarding flow with CV Booster:
+
+**Key Decisions:**
+- 7-step flow: OAuth → CV Input → AI Questions → Review → Job URL → AHA → Dashboard
+- CV input: Text paste + PDF upload (no LinkedIn API due to restrictions)
+- AI Questions: One at a time (wizard style), 3-4 for existing CV, 5-7 from scratch
+- All questions skippable - generate anyway with warning
+- AHA moment: Seeing tailored CV generated in <30 seconds
+
+**Files to Create:**
+- `app/(onboarding)/*` - New route group with 5 pages
+- `app/components/onboarding/*` - 10 new components
+- `app/api/onboarding/*` - 3 new API routes
+- `lib/cv-analyzer.ts` - CV gap analysis logic
+- `lib/cv-enhancer.ts` - CV enhancement logic
+- `supabase/migrations/007_onboarding.sql` - Schema changes
+
+**Success Metrics:**
+- Onboarding completion: 75%+
+- Time to complete: <2 minutes
+- Day-7 retention: 40%+
+
+---
+
+## Session: 2026-01-02 (Credits System)
+
+### Completed: Full Credits-Based Billing System
+
+Implemented complete credits system with bundle purchases (Marc Lou pricing philosophy).
+
+**Database Migration:**
+- `supabase/migrations/008_credits_model.sql`
+  - Added `cv_credits`, `total_credits_purchased`, `last_free_credit_reset` to user_billing
+  - Created `credit_purchases` table for purchase history
+  - Created `credit_usage_log` table for audit trail
+  - Helper functions: `add_credits`, `use_credit`, `get_credit_balance`, `reset_free_credits`
+  - Monthly free credits reset (ensures minimum of 3, doesn't reduce existing)
+
+**Credit Bundles:**
+- Starter: 10 credits @ $9 ($0.90/credit)
+- Job Seeker: 30 credits @ $19 ($0.63/credit) - 30% off, "Popular"
+- Power Search: 100 credits @ $39 ($0.39/credit) - 57% off
+
+**Backend Files:**
+- `lib/credits.ts` - Credit bundle config and management functions
+- `lib/stripe-prices.ts` - Simplified to credit bundles only (removed subscriptions)
+- `app/api/stripe/webhooks/route.ts` - Simplified to handle checkout.session.completed only
+- `app/api/credits/route.ts` - GET endpoint for credit balance
+- `app/api/credits/use/route.ts` - POST endpoint to consume 1 credit
+
+**Frontend Components:**
+- `app/components/billing/CreditBalance.tsx` - Shows credits in sidebar
+  - 3 variants: sidebar, header, compact
+  - Color coding: green (>=3), amber (1-2), red (0)
+  - Auto-refresh on window focus
+- `app/components/billing/BuyCreditsModal.tsx` - Purchase modal
+  - 3 bundle cards, highlights "Job Seeker" as popular
+  - Initiates Stripe checkout
+- `app/components/billing/LowCreditsWarning.tsx` - Warning when credits <= 3
+- `app/components/SideNav.tsx` - Credits display integrated into sidebar
+
+**Playwright Tests:**
+- `tests/e2e/credits.spec.ts` - E2E tests for credits display, modal, checkout flow
+
+**To Activate:**
+1. Run migrations in Supabase SQL editor:
+   - `supabase/migrations/006_tailored_cv.sql` (for tailored CV columns)
+   - `supabase/migrations/008_credits_model.sql` (for credits system)
+2. Create Stripe products for 3 bundles in Stripe Dashboard:
+   - Starter: $9 one-time payment (10 credits)
+   - Job Seeker: $19 one-time payment (30 credits)
+   - Power Search: $39 one-time payment (100 credits)
+3. Add price IDs to `.env.local`:
+   ```
+   STRIPE_PRICE_STARTER=price_...
+   STRIPE_PRICE_JOB_SEEKER=price_...
+   STRIPE_PRICE_POWER=price_...
+   ```
+
+---
+
 ## Next Steps
 
-1. Build actual landing page using the design system
-2. Create onboarding flow pages
-3. Add icons to extension (optional - works without)
-4. Deploy to production and update extension's API_BASE_URL
-5. Consider publishing to Chrome Web Store
+1. Create Stripe products/prices in dashboard and get real price IDs
+2. Set up webhook endpoint in Stripe: `https://yourapp.com/api/stripe/webhooks`
+3. Build pricing page UI using design system
+4. Build actual landing page using the design system
+5. Implement onboarding flow (see `docs/FEATURE_ONBOARDING_CV_BOOSTER.md`)
+6. Add icons to extension (optional - works without)
+7. Deploy to production and update extension's API_BASE_URL

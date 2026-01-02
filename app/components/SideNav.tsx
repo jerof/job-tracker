@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { CreditBalance } from './billing/CreditBalance';
+import { BuyCreditsModal } from './billing/BuyCreditsModal';
 
 // Icons - clean, 18x18 Linear-style with thinner strokes
 const Icons = {
@@ -47,7 +49,7 @@ const Icons = {
 };
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Jobs', icon: Icons.jobs, shortcut: 'G J' },
+  { href: '/dashboard', label: 'Jobs', icon: Icons.jobs, shortcut: 'G J' },
   { href: '/cv', label: 'CV', icon: Icons.cv, shortcut: 'G C' },
   { href: '/research', label: 'Research', icon: Icons.research, shortcut: 'G R' },
   { href: '/settings', label: 'Settings', icon: Icons.settings, shortcut: 'G S' },
@@ -64,6 +66,7 @@ export function SideNav({ onCollapseChange }: SideNavProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showBuyModal, setShowBuyModal] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -146,7 +149,7 @@ export function SideNav({ onCollapseChange }: SideNavProps) {
           const isActive = pathname === item.href;
 
           const testIdMap: Record<string, string> = {
-            '/': 'nav-item-jobs',
+            '/dashboard': 'nav-item-jobs',
             '/cv': 'nav-item-cv',
             '/research': 'nav-item-research',
             '/settings': 'nav-item-settings',
@@ -215,6 +218,14 @@ export function SideNav({ onCollapseChange }: SideNavProps) {
         })}
       </nav>
 
+      {/* Credits Display */}
+      <div className={`${isCollapsed ? 'px-2' : 'px-2'} py-3 border-t border-slate-100 dark:border-slate-800`}>
+        <CreditBalance
+          variant={isCollapsed ? 'compact' : 'sidebar'}
+          onBuyClick={() => setShowBuyModal(true)}
+        />
+      </div>
+
       {/* Collapse Toggle */}
       <div className={`${isCollapsed ? 'px-2' : 'px-2'} py-3 border-t border-slate-100 dark:border-slate-800`}>
         <button
@@ -241,6 +252,12 @@ export function SideNav({ onCollapseChange }: SideNavProps) {
           )}
         </button>
       </div>
+
+      {/* Buy Credits Modal */}
+      <BuyCreditsModal
+        isOpen={showBuyModal}
+        onClose={() => setShowBuyModal(false)}
+      />
     </aside>
   );
 }

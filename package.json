@@ -14,15 +14,19 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "@hello-pangea/dnd": "^18.0.1",
+    "@stripe/stripe-js": "^8.6.0",
     "@supabase/supabase-js": "^2.89.0",
     "@tanstack/react-query": "^5.90.13",
+    "framer-motion": "^12.23.26",
     "googleapis": "^169.0.0",
     "next": "16.1.1",
     "openai": "^6.15.0",
+    "pdf-parse": "^2.4.5",
     "puppeteer": "^24.34.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-markdown": "^10.1.0"
+    "react-markdown": "^10.1.0",
+    "stripe": "^20.1.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

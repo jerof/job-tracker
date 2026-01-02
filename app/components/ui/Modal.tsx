@@ -11,6 +11,7 @@ interface ModalProps {
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
+  'data-testid'?: string;
 }
 
 const sizes = {
@@ -29,6 +30,7 @@ export function Modal({
   closeOnBackdrop = true,
   closeOnEscape = true,
   showCloseButton = true,
+  'data-testid': dataTestId,
 }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -82,6 +84,7 @@ export function Modal({
       `}
       role="dialog"
       aria-modal="true"
+      data-testid="modal-backdrop"
     >
       <div
         ref={contentRef}
@@ -94,10 +97,12 @@ export function Modal({
           animate-in zoom-in-95 slide-in-from-bottom-2 duration-200
           focus:outline-none
         `}
+        data-testid={dataTestId}
       >
         {showCloseButton && (
           <button
             onClick={onClose}
+            data-testid="modal-close-button"
             className={`
               absolute top-4 right-4
               p-1.5 rounded-lg

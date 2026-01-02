@@ -50,6 +50,33 @@ What's happening vs what should happen.
 
 ## Fixed Bugs
 
+### [BUG-007] Gmail sync not updating "Saved" jobs to "Applied" status
+- **Status:** Fixed
+- **Severity:** High
+- **Found:** 2026-01-02
+- **Fixed:** 2026-01-02
+
+**Description:**
+Application confirmation emails were not updating jobs from "Saved" status to "Applied" status. Example: User saved "Cleo - Lead Product Manager" job, then received a confirmation email from "Cleo AI", but the job remained in "Saved" status.
+
+**Root Cause:**
+Two issues:
+1. **Company name matching was too strict**: The sync logic used exact `.ilike()` matching. When saved job had company "Cleo" but email came from "Cleo AI", no match was found.
+2. **Status order didn't include 'saved'**: The `statusOrder` array was `['applied', 'interviewing', 'offer', 'closed']` and didn't include 'saved'. While the math coincidentally worked (saved = -1, applied = 0, so 0 > -1 = true), the intent was unclear.
+
+**Fix:**
+1. Added fuzzy company name matching with `normalizeCompanyName()` and `companiesMatch()` functions:
+   - Removes common suffixes (Inc, LLC, AI, IO, etc.)
+   - Normalizes to lowercase alphanumeric only
+   - Matches if one normalized name contains the other ("cleo" matches "cleoai")
+2. Added 'saved' to the beginning of `statusOrder` array: `['saved', 'applied', 'interviewing', 'offer', 'closed']`
+3. Added `applied_date` update when transitioning from 'saved' to 'applied'
+4. Added better logging for debugging matching issues
+
+**File Changed:** `app/api/sync/route.ts`
+
+---
+
 ### [BUG-001] Gmail sync not finding today's emails
 - **Status:** Fixed
 - **Severity:** High

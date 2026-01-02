@@ -38,13 +38,35 @@ npm run lint     # Run ESLint
 ## Environment Variables
 Required in `.env.local`:
 ```
+# Supabase
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+# Google OAuth
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+
+# AI
 ANTHROPIC_API_KEY=
+PERPLEXITY_API_KEY=
+
+# Stripe (Credits System)
+STRIPE_SECRET_KEY=
+STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_STARTER=      # 10 credits @ $9
+STRIPE_PRICE_JOB_SEEKER=   # 30 credits @ $19
+STRIPE_PRICE_POWER=        # 100 credits @ $39
 ```
+
+## Credits System
+Users get 3 free credits/month. Additional credits purchased via Stripe:
+- **Starter:** 10 credits @ $9
+- **Job Seeker:** 30 credits @ $19 (popular)
+- **Power Search:** 100 credits @ $39
+
+Credits are used for CV generation. Balance shown in sidebar.
 
 ## Architecture Notes
 - Gmail tokens stored encrypted in Supabase
