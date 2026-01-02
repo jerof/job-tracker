@@ -97,6 +97,24 @@ export function ApplicationCard({ application, index, onClick }: ApplicationCard
               </span>
 
               <div className="flex items-center gap-1.5">
+                {/* Tailored CV badge */}
+                {application.tailoredCvUrl && (
+                  <a
+                    href={application.tailoredCvUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30 text-red-600 dark:text-red-400 hover:from-red-200 hover:to-rose-200 dark:hover:from-red-900/50 dark:hover:to-rose-900/50 transition-colors text-[11px] font-medium"
+                    title="View tailored CV"
+                  >
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                      <path d="M14 2v6h6"/>
+                    </svg>
+                    CV
+                  </a>
+                )}
+
                 {/* Job URL link for saved jobs */}
                 {application.jobUrl && (
                   <a

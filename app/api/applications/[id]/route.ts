@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { dbToApplication } from '@/lib/database.types';
+import { triggerCVGeneration } from '@/lib/cv-auto-generate';
 
 // GET /api/applications/[id] - Get single application
 export async function GET(
@@ -74,6 +75,11 @@ export async function PATCH(
         return NextResponse.json({ error: 'Application not found' }, { status: 404 });
       }
       return NextResponse.json({ error: 'Failed to update application' }, { status: 500 });
+    }
+
+    // Auto-generate CV if job URL was added and no CV exists yet
+    if (body.jobUrl && !data.tailored_cv_url) {
+      triggerCVGeneration(id);
     }
 
     return NextResponse.json({ application: dbToApplication(data) });

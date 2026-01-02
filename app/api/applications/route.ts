@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { dbToApplication, applicationToDb } from '@/lib/database.types';
+import { triggerCVGeneration } from '@/lib/cv-auto-generate';
 
 // GET /api/applications - Get all applications for current user
 export async function GET() {
@@ -67,6 +68,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Application already exists' }, { status: 409 });
       }
       return NextResponse.json({ error: 'Failed to create application' }, { status: 500 });
+    }
+
+    // Auto-generate CV if job URL provided
+    if (body.jobUrl) {
+      triggerCVGeneration(data.id);
     }
 
     return NextResponse.json({ application: dbToApplication(data) }, { status: 201 });
