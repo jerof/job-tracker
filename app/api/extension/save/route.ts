@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { dbToApplication } from '@/lib/database.types';
+import { triggerCVGeneration } from '@/lib/cv-auto-generate';
 
 interface ExtensionSaveRequest {
   company: string;
@@ -137,6 +138,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Auto-generate CV in background (job URL is always provided from extension)
+    triggerCVGeneration(data.id);
 
     return NextResponse.json(
       {
