@@ -100,16 +100,16 @@ export default function CVInputPage() {
           placeholder={PLACEHOLDER_TEXT}
           className="
             w-full h-64 px-4 py-3
-            bg-neutral-800/50 border border-white/10
-            rounded-xl text-white placeholder-neutral-500
-            focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50
+            bg-gray-50 border border-gray-200
+            rounded-xl text-gray-900 placeholder-gray-400
+            focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300
             resize-none transition-all duration-200
             text-sm leading-relaxed
           "
         />
 
         {/* Character count */}
-        <div className="absolute bottom-3 right-3 text-xs text-neutral-500">
+        <div className="absolute bottom-3 right-3 text-xs text-gray-400">
           {cvText.length > 0 && `${cvText.length.toLocaleString()} characters`}
         </div>
       </div>
@@ -130,9 +130,9 @@ export default function CVInputPage() {
         whileTap={{ scale: 0.98 }}
         className="
           w-full mt-4 px-4 py-3
-          bg-neutral-800/50 border border-white/10 border-dashed
-          rounded-xl text-neutral-400
-          hover:bg-neutral-800 hover:border-white/20 hover:text-white
+          bg-gray-50 border border-gray-200 border-dashed
+          rounded-xl text-gray-500
+          hover:bg-gray-100 hover:border-gray-300 hover:text-gray-700
           transition-all duration-200
           flex items-center justify-center gap-2
           disabled:opacity-50 disabled:cursor-wait
@@ -163,7 +163,7 @@ export default function CVInputPage() {
       <OnboardingFooter className="flex items-center justify-between">
         <button
           onClick={handleNoCVClick}
-          className="text-neutral-500 hover:text-white text-sm transition-colors"
+          className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
         >
           I don&apos;t have a CV yet
         </button>
@@ -174,11 +174,11 @@ export default function CVInputPage() {
           whileTap={{ scale: 0.98 }}
           className="
             px-6 py-2.5
-            bg-gradient-to-r from-primary-500 to-primary-600
+            bg-gray-900
             text-white font-medium rounded-lg
-            hover:from-primary-600 hover:to-primary-700
+            hover:bg-gray-800
             transition-all duration-200
-            shadow-lg shadow-primary-500/25
+            shadow-lg shadow-gray-900/25
             flex items-center gap-2
           "
         >

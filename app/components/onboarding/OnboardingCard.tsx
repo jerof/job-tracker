@@ -15,11 +15,11 @@ export function OnboardingCard({ children, className = '' }: OnboardingCardProps
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className={`
-        bg-neutral-900/80 backdrop-blur-xl
-        border border-white/10
+        bg-white
+        border border-gray-200
         rounded-2xl
         p-8
-        shadow-2xl shadow-black/20
+        shadow-xl shadow-gray-200/50
         ${className}
       `}
     >
@@ -35,7 +35,7 @@ interface OnboardingTitleProps {
 
 export function OnboardingTitle({ children }: OnboardingTitleProps) {
   return (
-    <h1 className="text-2xl font-bold text-white mb-2 text-center">
+    <h1 className="text-2xl font-bold text-gray-900 mb-2 text-center">
       {children}
     </h1>
   );
@@ -47,7 +47,7 @@ interface OnboardingSubtitleProps {
 
 export function OnboardingSubtitle({ children }: OnboardingSubtitleProps) {
   return (
-    <p className="text-neutral-400 text-center mb-6">
+    <p className="text-gray-600 text-center mb-6">
       {children}
     </p>
   );
@@ -60,7 +60,7 @@ interface OnboardingFooterProps {
 
 export function OnboardingFooter({ children, className = '' }: OnboardingFooterProps) {
   return (
-    <div className={`mt-8 pt-6 border-t border-white/10 ${className}`}>
+    <div className={`mt-8 pt-6 border-t border-gray-100 ${className}`}>
       {children}
     </div>
   );
@@ -72,7 +72,7 @@ interface OnboardingHelperTextProps {
 
 export function OnboardingHelperText({ children }: OnboardingHelperTextProps) {
   return (
-    <p className="text-sm text-neutral-500 mt-3 text-center">
+    <p className="text-sm text-gray-500 mt-3 text-center">
       {children}
     </p>
   );
@@ -86,7 +86,7 @@ interface TimeIndicatorProps {
 export function TimeIndicator({ text }: TimeIndicatorProps) {
   return (
     <div className="flex justify-center mb-4">
-      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-500/10 text-primary-400 text-xs font-medium">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>

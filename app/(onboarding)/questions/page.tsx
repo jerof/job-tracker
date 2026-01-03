@@ -156,9 +156,9 @@ export default function QuestionsPage() {
 
       {/* Question counter */}
       <div className="flex justify-center mb-6">
-        <span className="text-sm text-neutral-400">
-          Question <span className="text-white font-semibold">{currentIndex + 1}</span> of{' '}
-          <span className="text-white font-semibold">{questions.length}</span>
+        <span className="text-sm text-gray-500">
+          Question <span className="text-gray-900 font-semibold">{currentIndex + 1}</span> of{' '}
+          <span className="text-gray-900 font-semibold">{questions.length}</span>
         </span>
       </div>
 
@@ -172,7 +172,7 @@ export default function QuestionsPage() {
           transition={{ duration: 0.2 }}
         >
           {/* Question text */}
-          <p className="text-white text-lg mb-4 leading-relaxed">
+          <p className="text-gray-900 text-lg mb-4 leading-relaxed">
             {currentQuestion.text}
           </p>
 
@@ -183,9 +183,9 @@ export default function QuestionsPage() {
             placeholder={currentQuestion.placeholder}
             className="
               w-full h-32 px-4 py-3
-              bg-neutral-800/50 border border-white/10
-              rounded-xl text-white placeholder-neutral-500
-              focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50
+              bg-gray-50 border border-gray-200
+              rounded-xl text-gray-900 placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300
               resize-none transition-all duration-200
               text-sm leading-relaxed
             "
@@ -201,7 +201,7 @@ export default function QuestionsPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="text-sm text-primary-400 text-center mt-3"
+            className="text-sm text-emerald-600 text-center mt-3"
           >
             {skipMessage}
           </motion.p>
@@ -213,7 +213,7 @@ export default function QuestionsPage() {
           {currentIndex > 0 && (
             <button
               onClick={handleBack}
-              className="text-neutral-500 hover:text-white text-sm transition-colors flex items-center gap-1"
+              className="text-gray-500 hover:text-gray-900 text-sm transition-colors flex items-center gap-1"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -223,7 +223,7 @@ export default function QuestionsPage() {
           )}
           <button
             onClick={handleSkip}
-            className="text-neutral-500 hover:text-white text-sm transition-colors"
+            className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
           >
             Skip for now
           </button>
@@ -235,11 +235,11 @@ export default function QuestionsPage() {
           whileTap={{ scale: 0.98 }}
           className="
             px-6 py-2.5
-            bg-gradient-to-r from-primary-500 to-primary-600
+            bg-gray-900
             text-white font-medium rounded-lg
-            hover:from-primary-600 hover:to-primary-700
+            hover:bg-gray-800
             transition-all duration-200
-            shadow-lg shadow-primary-500/25
+            shadow-lg shadow-gray-900/25
             flex items-center gap-2
           "
         >

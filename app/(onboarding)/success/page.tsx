@@ -135,7 +135,7 @@ export default function SuccessPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-2xl font-bold text-white mb-2"
+          className="text-2xl font-bold text-gray-900 mb-2"
         >
           Your tailored CV is ready!
         </motion.h1>
@@ -145,13 +145,13 @@ export default function SuccessPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-neutral-400 mb-8"
+          className="text-gray-600 mb-8"
         >
           {jobDetails ? (
             <>
               We&apos;ve customized your CV for{' '}
-              <span className="text-white font-medium">{jobDetails.role}</span> at{' '}
-              <span className="text-white font-medium">{jobDetails.company}</span>.
+              <span className="text-gray-900 font-medium">{jobDetails.role}</span> at{' '}
+              <span className="text-gray-900 font-medium">{jobDetails.company}</span>.
               <br />
               Keywords matched, experience reordered, ready to impress.
             </>
@@ -171,32 +171,32 @@ export default function SuccessPage() {
             className="mb-8"
           >
             <div className="
-              bg-white/5 border border-white/10
+              bg-gray-50 border border-gray-200
               rounded-xl p-6 mb-4
               relative overflow-hidden
             ">
               {/* Simulated PDF preview */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-16 bg-error-500/20 rounded flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-error-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-12 h-16 bg-red-50 rounded flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-white font-medium mb-1">
+                  <h3 className="text-gray-900 font-medium mb-1">
                     CV_Tailored_{jobDetails.company.replace(/\s+/g, '_')}.pdf
                   </h3>
-                  <p className="text-neutral-500 text-sm">
+                  <p className="text-gray-500 text-sm">
                     Customized for {jobDetails.role}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-3">
-                    <span className="px-2 py-0.5 bg-success-500/20 text-success-400 text-xs rounded-full">
+                    <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-xs rounded-full">
                       Skills matched
                     </span>
-                    <span className="px-2 py-0.5 bg-primary-500/20 text-primary-400 text-xs rounded-full">
+                    <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-full">
                       Experience reordered
                     </span>
-                    <span className="px-2 py-0.5 bg-info-500/20 text-info-400 text-xs rounded-full">
+                    <span className="px-2 py-0.5 bg-purple-50 text-purple-600 text-xs rounded-full">
                       Keywords optimized
                     </span>
                   </div>
@@ -211,11 +211,11 @@ export default function SuccessPage() {
               whileTap={{ scale: 0.98 }}
               className="
                 w-full px-6 py-3
-                bg-white text-neutral-900 font-medium rounded-xl
-                hover:bg-neutral-100
+                bg-gray-900 text-white font-medium rounded-xl
+                hover:bg-gray-800
                 transition-all duration-200
                 flex items-center justify-center gap-2
-                shadow-lg
+                shadow-lg shadow-gray-900/25
               "
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -240,8 +240,8 @@ export default function SuccessPage() {
             transition-all duration-200
             flex items-center justify-center gap-2
             ${jobDetails
-              ? 'bg-neutral-800 text-white hover:bg-neutral-700 border border-white/10'
-              : 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 shadow-lg shadow-primary-500/25'
+              ? 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-200'
+              : 'bg-gray-900 text-white hover:bg-gray-800 shadow-lg shadow-gray-900/25'
             }
           `}
         >
@@ -256,7 +256,7 @@ export default function SuccessPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="mt-6 text-neutral-500 text-sm"
+          className="mt-6 text-gray-500 text-sm"
         >
           Love it? Share Canopy with a friend who&apos;s job hunting.
         </motion.p>

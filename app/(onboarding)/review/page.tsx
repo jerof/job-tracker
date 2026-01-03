@@ -86,8 +86,8 @@ export default function ReviewPage() {
             className="w-12 h-12 border-3 border-primary-500 border-t-transparent rounded-full mb-4"
             style={{ borderWidth: 3 }}
           />
-          <p className="text-white text-lg font-medium">Crafting your enhanced CV...</p>
-          <p className="text-neutral-400 text-sm mt-2">This usually takes a few seconds</p>
+          <p className="text-gray-900 text-lg font-medium">Crafting your enhanced CV...</p>
+          <p className="text-gray-500 text-sm mt-2">This usually takes a few seconds</p>
         </div>
       </OnboardingCard>
     );
@@ -105,8 +105,8 @@ export default function ReviewPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm">{error}</p>
         </div>
       )}
 
@@ -118,9 +118,9 @@ export default function ReviewPage() {
             onChange={(e) => setMasterCV(e.target.value)}
             className="
               w-full h-96 px-4 py-4
-              bg-white/5 border border-white/10
-              rounded-xl text-white font-mono text-sm
-              focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50
+              bg-gray-50 border border-gray-200
+              rounded-xl text-gray-900 font-mono text-sm
+              focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300
               resize-none transition-all duration-200
               leading-relaxed
             "
@@ -128,10 +128,10 @@ export default function ReviewPage() {
           />
         ) : (
           <div className="
-            bg-white/5 border border-white/10
+            bg-gray-50 border border-gray-200
             rounded-xl p-4 max-h-96 overflow-y-auto
           ">
-            <pre className="text-white font-mono text-sm whitespace-pre-wrap leading-relaxed">
+            <pre className="text-gray-900 font-mono text-sm whitespace-pre-wrap leading-relaxed">
               {masterCV}
             </pre>
           </div>
@@ -144,7 +144,7 @@ export default function ReviewPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-4 flex items-center justify-center gap-2 text-success-400"
+          className="mt-4 flex items-center justify-center gap-2 text-emerald-600"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -158,7 +158,7 @@ export default function ReviewPage() {
           <>
             <button
               onClick={() => setIsEditing(false)}
-              className="text-neutral-500 hover:text-white text-sm transition-colors"
+              className="text-gray-500 hover:text-gray-900 text-sm transition-colors"
             >
               Cancel
             </button>
@@ -168,11 +168,11 @@ export default function ReviewPage() {
               whileTap={{ scale: 0.98 }}
               className="
                 px-6 py-2.5
-                bg-gradient-to-r from-primary-500 to-primary-600
+                bg-gray-900
                 text-white font-medium rounded-lg
-                hover:from-primary-600 hover:to-primary-700
+                hover:bg-gray-800
                 transition-all duration-200
-                shadow-lg shadow-primary-500/25
+                shadow-lg shadow-gray-900/25
               "
             >
               Save changes
@@ -184,8 +184,8 @@ export default function ReviewPage() {
               onClick={handleEdit}
               className="
                 px-4 py-2
-                text-neutral-400 hover:text-white
-                border border-white/10 hover:border-white/20
+                text-gray-500 hover:text-gray-900
+                border border-gray-200 hover:border-gray-300
                 rounded-lg text-sm transition-all duration-200
                 flex items-center gap-2
               "
@@ -202,11 +202,11 @@ export default function ReviewPage() {
               whileTap={{ scale: 0.98 }}
               className="
                 px-6 py-2.5
-                bg-gradient-to-r from-primary-500 to-primary-600
+                bg-gray-900
                 text-white font-medium rounded-lg
-                hover:from-primary-600 hover:to-primary-700
+                hover:bg-gray-800
                 transition-all duration-200
-                shadow-lg shadow-primary-500/25
+                shadow-lg shadow-gray-900/25
                 flex items-center gap-2
               "
             >
